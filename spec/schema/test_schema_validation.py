@@ -66,3 +66,51 @@ def test_failure_validation_error():
 
 # Additional tests can be defined here to cover more scenarios
 
+
+
+def test_missing_name_field():
+    # Schema string with a missing "name" field in one of the components
+    schema_string_missing_name = r"""
+    [
+        {
+            "inputs": [
+                {"parameter": "url", "content": "https://example.com"}
+            ],
+            "outputs": [
+                {"parameter": "result", "content": "{}"}
+            ]
+        }
+    ]
+    """
+    result = validate_and_parse_llm_output(schema_string_missing_name, llm_output_validation_schema)
+    assert result is None, "Expected failure when 'name' field is missing."
+
+def test_incorrect_structure():
+    # Schema string with an incorrect structure (components not wrapped in a list)
+    schema_string_incorrect_structure = r"""
+    {
+        "name": "IncorrectStructure",
+        "inputs": [{"parameter": "url", "content": "https://example.com"}],
+        "outputs": [{"parameter": "result", "content": "{}"}]
+    }
+    """
+    result = validate_and_parse_llm_output(schema_string_incorrect_structure, llm_output_validation_schema)
+    assert result is None, "Expected failure with incorrect schema structure."
+
+def test_invalid_content_type():
+    # Schema string with invalid content type for "content" (expected string, got object)
+    schema_string_invalid_content_type = r"""
+    [
+        {
+            "name": "InvalidContentType",
+            "inputs": [
+                {"parameter": "url", "content": {"unexpected": "object"}}
+            ],
+            "outputs": [
+                {"parameter": "result", "content": "valid"}
+            ]
+        }
+    ]
+    """
+    result = validate_and_parse_llm_output(schema_string_invalid_content_type, llm_output_validation_schema)
+    assert result is None, "Expected failure when 'content' field has invalid type."
