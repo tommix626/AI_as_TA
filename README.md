@@ -55,3 +55,8 @@ A Bigger scale demo focusing on providing a NLP way to build flows automatically
   - Create a main script (`main.py`) that takes a schema as input (from a file or hardcoded for the demo), parses it, constructs the workflow, and executes it, displaying the final output.
 
 By focusing on these streamlined steps, you'll be able to build a functional demo of your no-code platform, demonstrating the core capabilities of parsing schemas, executing defined components, and dynamically constructing flows based on input schemas.
+
+
+# TODOS:
+- constructors should separate the id and the name into two fields.
+- Now we are using string as the passing, there should be also a version which generate a langchain Runnable chain as the end output using LCEL.
