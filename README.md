@@ -60,3 +60,4 @@ By focusing on these streamlined steps, you'll be able to build a functional dem
 # TODOS:
 - constructors should separate the id and the name into two fields.
 - Now we are using string as the passing, there should be also a version which generate a langchain Runnable chain as the end output using LCEL.
+- add schema for each component
