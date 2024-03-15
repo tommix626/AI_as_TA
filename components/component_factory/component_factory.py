@@ -1,12 +1,17 @@
 import logging
 
+from components.component_factory.define import component_map
+from collections import defaultdict, deque
 
 class ComponentFactory:
+    """
+    a factory is a representation over a single flow/graph.
+    """
     def __init__(self, registry):
-        self.registry = registry
+        self.registry = registry # factory will populate this registry with components and dependency.
 
     def create_component(self, schema):
-        """Create a component based on the schema."""
+        """Create a component based on the schema. Schema is the output of the llm orchestration"""
         component_type = schema["name"]
         component_id = schema["id"]
 
@@ -22,7 +27,7 @@ class ComponentFactory:
             return None
 
         # Instantiate component with parameters and register it
-        component = component_cls(component_id=component_id, global_registry=self.registry, **schema["parameters"])
+        component = component_cls(component_id=component_id, **schema["parameters"])
         self._setup_dependencies(component, schema["parameters"])
         self.registry.register(component)
 
@@ -30,12 +35,8 @@ class ComponentFactory:
 
     def _get_component_class(self, component_type):
         """Retrieve the component class from a global or local mapping."""
-        component_map = {
-            # Mapping of component type names to their classes
-            "OpenAIAgent": OpenAIAgentComponent,
-            # Include other mappings...
-        }
-        return component_map.get(component_type)
+
+        return component_map.get(component_type) #component_map is in define.py
 
     def _validate_schema_inputs(self, schema, component_schema):
         """Validate the provided schema inputs against the component's expected inputs."""
@@ -59,3 +60,41 @@ class ComponentFactory:
             else:
                 # Direct assignment for non-dependency parameters
                 setattr(component, param_name, param_value)
+
+    def parse_and_sort_dependencies(self, schemas):
+        """Parses dependencies and returns a list of component IDs in topological order."""
+        graph = defaultdict(list)
+        in_degree = defaultdict(int)  # Keep track of in-degrees for topological sort
+
+        # Parse dependencies to construct the graph
+        for schema in schemas:
+            component_id = schema["id"]
+            for param in schema.get("parameters", {}).values():
+                if isinstance(param, str) and param.startswith("##"):
+                    dependency_id = param[2:]
+                    graph[dependency_id].append(component_id)
+                    in_degree[component_id] += 1
+
+        # Detect cycles using DFS or another algorithm if necessary (not shown for brevity)
+
+        # Perform topological sort
+        return self._topological_sort(graph, in_degree)
+
+    def _topological_sort(self, graph, in_degree):
+        """Performs a topological sort on the dependency graph."""
+        queue = deque([node for node in graph if in_degree[node] == 0])
+        sorted_order = []
+
+        while queue:
+            node = queue.popleft()
+            sorted_order.append(node)
+
+            for adjacent in graph[node]:
+                in_degree[adjacent] -= 1
+                if in_degree[adjacent] == 0:
+                    queue.append(adjacent)
+
+        if len(sorted_order) == len(graph):
+            return sorted_order
+        else:
+            raise ValueError("A cyclic dependency was detected among the components.")

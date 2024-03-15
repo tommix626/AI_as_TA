@@ -6,8 +6,11 @@ import logging
 
 
 class ComponentRegistry:
+    """
+    maintain a components mapping, from a global id to class instance.
+    """
     def __init__(self):
-        self.components = {}
+        self.components = {}  #ID->Instance
 
     def register(self, component):
         """Register a component instance in the registry."""
