@@ -12,7 +12,7 @@ def _parse_llm_generated_schema(generated_schema):
         component_name, component_id = component["name"].split('_')
         comp_details = {
             "name": component_name, #name used for finding the class
-            "id": component_id, #unique id, in the form ClassName_{4 char id}
+            "id": component["name"], #unique id, in the form ClassName_{4 char id}
             "inputs": {},
             "outputs": {}
         }

@@ -6,7 +6,7 @@ from components.basic_components.test_components import TestComponentA, TestComp
 
 # component map used by the factory, it should be the output name used by the constructor.
 component_map = {
-    # Mapping of component type names to their classes Name appeared in LLM Orchestration Output:classes.
+    # Mapping of component type names to their classes Name appeared in LLM Orchestration Output.  Cascade_output_str : class.
     "OpenAIAgent": OpenAIAgentComponent,
     "HTTP_API_Post": HTTPPostComponent,
     "HTTP_API_Get": HTTPGetComponent,

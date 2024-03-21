@@ -8,6 +8,7 @@ from jsonschema.exceptions import ValidationError
 def validate_and_parse_cascade_output(cascade_output_string, validation_schema):
     """
     Validates the LLM output against a given schema and parses it if validation passes.
+    From this point, everything will be in python.
 
     :param cascade_output_string: JSON string representation of the LLM output.
     :param validation_schema: JSON schema for validation.
