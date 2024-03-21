@@ -2,6 +2,56 @@ import requests
 from components.base_component import BaseComponent
 
 class HTTPGetComponent(BaseComponent):
+    component_schema = r"""
+    {
+"name": "HTTP_API_Get",
+"description": "A component designed to retrieve information from third-party websites by initiating HTTP GET requests. It enables sending requests to specified URLs and optionally includes headers for authentication or specifying request metadata. Tailored for scenarios requiring data extraction from external sources.",
+"inputs": [
+{
+"parameter": "url",
+"description": "The web address (endpoint) from which information is to be retrieved. This should be a fully qualified URL specifying the protocol (http or https), domain, and path to the resource. Use the defined constant if you need",
+
+"defs": [
+{
+"refName": "CourseloreGetPost",
+"description": "Endpoint for retrieving a specific post from Courselore using a post ID and an optional limit parameter. Useful for fetching detailed post information.",
+"value": "https://courselore.com/get?id=rorih4jfgee&limit=-1"
+},
+{
+"refName": "CourseloreGetUnreadNumber",
+"description": "Endpoint to get the number of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
+"value": "https://courselore.com/get?id=rorih4jfgee"
+},
+{
+"refName": "MastodonSocialGetPost",
+"description": "Endpoint to retrieve recent public posts from the Mastodon social network with a limit on the number of posts. Ideal for integrating public social feeds.",
+"value": "https://mastodon.social/api/v1/timelines/public?limit=2"
+}
+]
+"type": "string",
+"example": "https://api.example.com/data"
+
+content: ""
+},
+{
+"parameter": "header (Optional)",
+"description": "A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
+"type": "json",
+"example": "{\"Authorization\": \"Bearer YOUR_API_TOKEN\", \"Content-Type\": \"application/json\"}"
+
+content: ""
+},
+],
+"outputs": [
+{
+"parameter": "result",
+"description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from the requested URL, encompassing data, metadata, or any errors encountered during the request. It's crucial for implementing logic based on the response.",
+"type": "json",
+"example": "{\"data\": [{\"id\": 1, \"name\": \"Example\"}], \"meta\": {\"count\": 1}}"
+}
+]
+}
+    """
     def __init__(self, component_id, url=None, headers=None):
         super().__init__(component_id)
         # URL and headers can be direct values or references to upstream components' outputs
