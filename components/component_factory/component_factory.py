@@ -3,6 +3,7 @@ import logging
 from components.component_factory.define import component_map
 from collections import defaultdict, deque
 
+
 class ComponentFactory:
     """
     a factory is a representation over a single flow/graph.
@@ -10,10 +11,10 @@ class ComponentFactory:
     def __init__(self, registry):
         self.registry = registry # factory will populate this registry with components and dependency.
 
-    def create_component(self, schema):
+    def create_component(self, cascade_component_schema):
         """Create a component based on the schema. Schema is the output of the llm orchestration"""
-        component_type = schema["name"]
-        component_id = schema["id"]
+        component_type = cascade_component_schema["name"]
+        component_id = cascade_component_schema["id"]
 
         # Retrieve the component class from its type
         component_cls = self._get_component_class(component_type)
@@ -22,19 +23,19 @@ class ComponentFactory:
             return None
 
         # Validate schema inputs against the component's expected inputs
-        if not self._validate_schema_inputs(schema, component_cls.component_schema):
+        if not self._validate_schema_inputs(cascade_component_schema, component_cls.component_schema):
             logging.error(f"Schema validation failed for component {component_type}.")
             return None
 
         # Instantiate component with parameters and register it
-        component = component_cls(component_id=component_id, **schema["parameters"])
-        self._setup_dependencies(component, schema["parameters"])
+        component = component_cls(component_id=component_id, **cascade_component_schema["parameters"])
+        self._setup_dependencies(component, cascade_component_schema["parameters"])
         self.registry.register(component)
 
         return component
 
     def _get_component_class(self, component_type):
-        """Retrieve the component class from a global or local mapping."""
+        """Retrieve the component class from a pre-defined mapping."""
 
         return component_map.get(component_type) #component_map is in define.py
 
@@ -56,26 +57,36 @@ class ComponentFactory:
                     callback = lambda: upstream_component.get_output()
                     setattr(component, param_name, callback)
                 else:
-                    logging.warning(f"Upstream component {upstream_id} not found for {param_name}.")
+                    logging.warning(f"Upstream component ID= {upstream_id} not found when setting up param: {param_name}.")
             else:
                 # Direct assignment for non-dependency parameters
                 setattr(component, param_name, param_value)
 
-    def parse_and_sort_dependencies(self, schemas):
+    def setup(self, parsed_cascade_output):
+        """
+        Set up the graph for this flow from raw_cascade_output
+        :param raw_cascade_output: caller should call validate_and_parse_cascade_output to make sure the input is conforming to the schema.
+        :return:
+        """
+        # components = validate_and_parse_cascade_output(raw_cascade_output, llm_output_validation_schema)
+        sorted_components = self._parse_and_sort_dependencies(parsed_cascade_output)
+        for component in sorted_components:
+            self._setup_dependencies(component,)
+
+
+    def _parse_and_sort_dependencies(self, components):
         """Parses dependencies and returns a list of component IDs in topological order."""
         graph = defaultdict(list)
         in_degree = defaultdict(int)  # Keep track of in-degrees for topological sort
 
         # Parse dependencies to construct the graph
-        for schema in schemas:
-            component_id = schema["id"]
-            for param in schema.get("parameters", {}).values():
+        for component in components:
+            component_id = component["id"]
+            for param in component.get("parameters", {}).values():
                 if isinstance(param, str) and param.startswith("##"):
                     dependency_id = param[2:]
                     graph[dependency_id].append(component_id)
                     in_degree[component_id] += 1
-
-        # Detect cycles using DFS or another algorithm if necessary (not shown for brevity)
 
         # Perform topological sort
         return self._topological_sort(graph, in_degree)

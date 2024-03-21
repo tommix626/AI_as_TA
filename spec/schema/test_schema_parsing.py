@@ -1,12 +1,12 @@
 # Example JSON string (representing the LLM chain generated schema)
 from schema.utils import convert_json_to_dict
-from schema.validate import parse_llm_generated_schema
+from schema._validate import parse_llm_generated_schema
 
 
 # test_schema_parsing.py
 import pytest
 from schema.utils import convert_json_to_dict
-from schema.validate import parse_llm_generated_schema
+from schema._validate import parse_llm_generated_schema
 
 def test_convert_and_parse_llm_generated_schema():
     generated_schema_string = r"""

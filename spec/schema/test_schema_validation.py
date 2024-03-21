@@ -1,6 +1,6 @@
 import pytest
 
-from schema.validate import validate_and_parse_llm_output
+from schema._validate import validate_and_parse_cascade_output
 from schema.define import *
 
 # Sample validation schema as defined previously or import it if it's defined elsewhere
@@ -8,7 +8,7 @@ from schema.define import *
 # Test cases
 
 def test_successful_validation_and_parsing():
-    # Assuming `validate_and_parse_llm_output` and `validation_schema` are accessible here
+    # Assuming `validate_and_parse_cascade_output` and `validation_schema` are accessible here
     llm_output_string = """
     [
         {
@@ -28,7 +28,7 @@ def test_successful_validation_and_parsing():
         }
     ]
     """
-    result = validate_and_parse_llm_output(llm_output_string, llm_output_validation_schema)
+    result = validate_and_parse_cascade_output(llm_output_string, llm_output_validation_schema)
     assert result is not None
     assert len(result) == 1
     assert result[0]["name"] == "SampleComponent"
@@ -39,7 +39,7 @@ def test_failure_invalid_json_format():
     llm_output_string = """
     { "invalid": "json" }  # Intentionally malformed for this test case
     """
-    result = validate_and_parse_llm_output(llm_output_string, llm_output_validation_schema)
+    result = validate_and_parse_cascade_output(llm_output_string, llm_output_validation_schema)
     assert result is None
 
 def test_failure_validation_error():
@@ -61,7 +61,7 @@ def test_failure_validation_error():
         }
     ]
     """
-    result = validate_and_parse_llm_output(llm_output_string, llm_output_validation_schema)
+    result = validate_and_parse_cascade_output(llm_output_string, llm_output_validation_schema)
     assert result is None
 
 # Additional tests can be defined here to cover more scenarios
@@ -82,7 +82,7 @@ def test_missing_name_field():
         }
     ]
     """
-    result = validate_and_parse_llm_output(schema_string_missing_name, llm_output_validation_schema)
+    result = validate_and_parse_cascade_output(schema_string_missing_name, llm_output_validation_schema)
     assert result is None, "Expected failure when 'name' field is missing."
 
 def test_incorrect_structure():
@@ -94,7 +94,7 @@ def test_incorrect_structure():
         "outputs": [{"parameter": "result", "content": "{}"}]
     }
     """
-    result = validate_and_parse_llm_output(schema_string_incorrect_structure, llm_output_validation_schema)
+    result = validate_and_parse_cascade_output(schema_string_incorrect_structure, llm_output_validation_schema)
     assert result is None, "Expected failure with incorrect schema structure."
 
 def test_invalid_content_type():
@@ -112,5 +112,5 @@ def test_invalid_content_type():
         }
     ]
     """
-    result = validate_and_parse_llm_output(schema_string_invalid_content_type, llm_output_validation_schema)
+    result = validate_and_parse_cascade_output(schema_string_invalid_content_type, llm_output_validation_schema)
     assert result is None, "Expected failure when 'content' field has invalid type."

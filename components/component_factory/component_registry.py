@@ -1,6 +1,5 @@
 """
-I think we currently don't need to use registry for specifc component.
-It is only used by the factory.
+It is only used by the factory. In charge of linking instance to their id, and execute the flow.
 """
 import logging
 

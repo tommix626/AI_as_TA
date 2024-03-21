@@ -4,7 +4,7 @@ from components.base_component import BaseComponent
 class OpenAIAgentComponent(BaseComponent):
     component_schema = r"""
     {
-"name": "OpenAIAgent_{id}",
+"name": "OpenAIAgent",
 "description": "A specialized language model tailored for executing specific tasks by processing structured inputs. This agent interprets and acts upon user-defined prompts and data inputs using adjustable creativity settings.",
 "inputs": [
 {
