@@ -13,14 +13,14 @@ def _parse_cascade_raw_schema(generated_schema):
         components = []
         for component in generated_schema:
             component_name, component_id = component["name"].split('@')
-            comp_details = {
+            comp_details = { #This is the after-parsed schema all the code should be working with
                 "name": component_name,  # Name used for finding the class
                 "id": component["name"],  # Unique ID, in the form ClassName_{4 char id}
-                "inputs": {},
+                "parameters": {},
                 "outputs": {}
             }
             for input_param in component.get("inputs", []):
-                comp_details["inputs"][input_param["parameter"]] = input_param.get("content", "")
+                comp_details["parameters"][input_param["parameter"]] = input_param.get("content", "")
             for output_param in component.get("outputs", []):
                 comp_details["outputs"][output_param["parameter"]] = output_param.get("content", "")
             components.append(comp_details)
@@ -30,7 +30,7 @@ def _parse_cascade_raw_schema(generated_schema):
         print(f"Error parsing LLM generated schema: {e}")
         return None
 
-def _convert_json_to_dict(json_string):
+def _convert_json_to_dict(json_string: str):
     try:
         return json.loads(json_string)
     except json.JSONDecodeError as e:

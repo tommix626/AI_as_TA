@@ -33,7 +33,7 @@ def test_successful_validation_and_parsing():
     assert result is not None
     assert len(result) == 1
     assert result[0]["name"] == "SampleComponent"
-    assert result[0]["inputs"]["sampleInput"] == "test input content"
+    assert result[0]["parameters"]["sampleInput"] == "test input content"
     assert result[0]["outputs"]["sampleOutput"] == "test output content"
 
 

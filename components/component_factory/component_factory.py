@@ -2,20 +2,24 @@ import logging
 
 from collections import defaultdict, deque
 
+from components.base_component import BaseComponent
 from components.component_factory.component_registry import ComponentRegistry
 from components.component_factory.utils import get_component_class, topological_sort
+from env import global_api_keys_and_config
+from schema._parse import _convert_json_to_dict
 
 
-def _validate_inputs(schema, component_schema):
+def _validate_inputs(schema: dict, component_schema_str: str):
     """Validate the provided schema inputs against the component's expected inputs.
     Making sure no input is missing."""
+    component_schema = _convert_json_to_dict(component_schema_str)
     expected_params = {param["parameter"] for param in component_schema["inputs"]}
     provided_params = set(schema["parameters"].keys())
 
     return expected_params == provided_params
 
 
-def _parse_and_sort_dependencies(components: list[dict[str,str]]) -> list[str]:
+def _parse_and_sort_dependencies(components: list[dict[str, str]]) -> list[str]:
     """Parses dependencies and returns a list of component IDs in topological order.
     Raises ValueError if an invalid dependency is found.
 
@@ -29,7 +33,7 @@ def _parse_and_sort_dependencies(components: list[dict[str,str]]) -> list[str]:
     # Parse dependencies to construct the graph
     for component in components:
         component_id = component["id"]
-        for param_value in component.get("parameters", {}).values():
+        for param_value in component["parameters"].values():
             if isinstance(param_value, str) and param_value.startswith("##"):
                 dependency_id = param_value[2:]
                 if dependency_id not in component_ids:
@@ -46,13 +50,16 @@ def _parse_and_sort_dependencies(components: list[dict[str,str]]) -> list[str]:
 
     return sorted_ids
 
+
 class ComponentFactory:
     """
     a factory is a representation over a single flow/graph.
     """
+    entry_component: BaseComponent
 
     def __init__(self, registry: ComponentRegistry):
         self.registry = registry  # factory will populate this registry with components and dependency.
+        self.entry_component = None
 
     def create_component(self, cascade_component_content_schema):
         """Create a component based on the schema. Schema is the output of the llm orchestration"""
@@ -71,8 +78,8 @@ class ComponentFactory:
             return None
 
         # Instantiate component with parameters and register it
-        component = component_cls(component_id=component_id, **cascade_component_content_schema["parameters"])
-        self._setup_component_dependencies(component, cascade_component_content_schema["parameters"])
+        component = component_cls(component_id=component_id, **cascade_component_content_schema["parameters"],**global_api_keys_and_config)
+        self._setup_component_dependencies(component, cascade_component_content_schema["parameters"]) #set up the callbacks here
         self.registry.register(component)
 
         return component
@@ -119,5 +126,9 @@ class ComponentFactory:
             if self.create_component(component_schema) is None:
                 return False
 
-
+        # last one should be the entry point of the flow. FIXME
+        self.entry_component = self.registry.get(sorted_components_id[-1])
         return True
+
+    def run(self):
+        return self.entry_component.get_output()

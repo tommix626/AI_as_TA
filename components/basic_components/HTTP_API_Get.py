@@ -1,58 +1,90 @@
+import json
+
 import requests
 from components.base_component import BaseComponent
+
+
+def convert_header_str_to_dict(headers_str):
+    """
+    Converts a string representation of a dictionary (headers) into a dictionary object.
+    Handles empty strings and invalid JSON formats gracefully, returning an empty dictionary in such cases.
+
+    Parameters:
+    - headers_str (str): The string representation of the headers dictionary.
+
+    Returns:
+    - dict: A dictionary object parsed from the input string. Returns an empty dictionary if input is invalid or empty.
+    """
+    if not headers_str.strip():
+        # If the input is an empty string or only contains whitespace, return an empty dictionary
+        return {}
+
+    try:
+        # Attempt to parse the string into a dictionary
+        headers_dict = json.loads(headers_str)
+        # Check if the result is indeed a dictionary
+        if isinstance(headers_dict, dict):
+            return headers_dict
+        else:
+            # If the parsed object is not a dictionary, log a warning/error and return an empty dictionary
+            print("Parsed object is not a dictionary.")
+            return {}
+    except json.JSONDecodeError:
+        # If there is a JSON decoding error, return an empty dictionary
+        print("Failed to parse headers string into dictionary.")
+        return {}
+
 
 class HTTPGetComponent(BaseComponent):
     component_schema = r"""
     {
-"name": "HTTP_API_Get",
-"description": "A component designed to retrieve information from third-party websites by initiating HTTP GET requests. It enables sending requests to specified URLs and optionally includes headers for authentication or specifying request metadata. Tailored for scenarios requiring data extraction from external sources.",
-"inputs": [
-{
-"parameter": "url",
-"description": "The web address (endpoint) from which information is to be retrieved. This should be a fully qualified URL specifying the protocol (http or https), domain, and path to the resource. Use the defined constant if you need",
-
-"defs": [
-{
-"refName": "CourseloreGetPost",
-"description": "Endpoint for retrieving a specific post from Courselore using a post ID and an optional limit parameter. Useful for fetching detailed post information.",
-"value": "https://courselore.com/get?id=rorih4jfgee&limit=-1"
-},
-{
-"refName": "CourseloreGetUnreadNumber",
-"description": "Endpoint to get the number of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
-"value": "https://courselore.com/get?id=rorih4jfgee"
-},
-{
-"refName": "MastodonSocialGetPost",
-"description": "Endpoint to retrieve recent public posts from the Mastodon social network with a limit on the number of posts. Ideal for integrating public social feeds.",
-"value": "https://mastodon.social/api/v1/timelines/public?limit=2"
+  "name": "HTTP_API_Get",
+  "description": "A component designed to retrieve information from third-party websites by initiating HTTP GET requests. It enables sending requests to specified URLs and optionally includes headers for authentication or specifying request metadata. Tailored for scenarios requiring data extraction from external sources.",
+  "inputs": [
+    {
+      "parameter": "url",
+      "description": "The web address (endpoint) from which information is to be retrieved. This should be a fully qualified URL specifying the protocol (http or https), domain, and path to the resource. Use the defined constant if you need",
+      "defs": [
+        {
+          "refName": "CourseloreGetPost",
+          "description": "Endpoint for retrieving a specific post from Courselore using a post ID and an optional limit parameter. Useful for fetching detailed post information.",
+          "value": "https://courselore.com/get?id=rorih4jfgee&limit=-1"
+        },
+        {
+          "refName": "CourseloreGetUnreadNumber",
+          "description": "Endpoint to get the number of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
+          "value": "https://courselore.com/get?id=rorih4jfgee"
+        },
+        {
+          "refName": "MastodonSocialGetPost",
+          "description": "Endpoint to retrieve recent public posts from the Mastodon social network with a limit on the number of posts. Ideal for integrating public social feeds.",
+          "value": "https://mastodon.social/api/v1/timelines/public?limit=2"
+        }
+      ],
+      "type": "string",
+      "example": "https://api.example.com/data",
+      "content": ""
+    },
+    {
+      "parameter": "headers",
+      "description": "A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
+      "type": "json",
+      "example": "{\"Authorization\": \"Bearer YOUR_API_TOKEN\", \"Content-Type\": \"application/json\"}",
+      "content": ""
+    }
+  ],
+  "outputs": [
+    {
+      "parameter": "result",
+      "description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from the requested URL, encompassing data, metadata, or any errors encountered during the request. It's crucial for implementing logic based on the response.",
+      "type": "json",
+      "example": "{\"data\": [{\"id\": 1, \"name\": \"Example\"}], \"meta\": {\"count\": 1}}"
+    }
+  ]
 }
-]
-"type": "string",
-"example": "https://api.example.com/data"
 
-content: ""
-},
-{
-"parameter": "header (Optional)",
-"description": "A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
-"type": "json",
-"example": "{\"Authorization\": \"Bearer YOUR_API_TOKEN\", \"Content-Type\": \"application/json\"}"
-
-content: ""
-},
-],
-"outputs": [
-{
-"parameter": "result",
-"description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from the requested URL, encompassing data, metadata, or any errors encountered during the request. It's crucial for implementing logic based on the response.",
-"type": "json",
-"example": "{\"data\": [{\"id\": 1, \"name\": \"Example\"}], \"meta\": {\"count\": 1}}"
-}
-]
-}
     """
-    def __init__(self, component_id, url=None, headers=None):
+    def __init__(self, component_id, url=None, headers=None,**vars):
         super().__init__(component_id)
         # URL and headers can be direct values or references to upstream components' outputs
         self.url = url
@@ -72,8 +104,9 @@ content: ""
             raise TypeError
 
         # Resolving 'headers'
-        if isinstance(self.headers, dict):
-            inputs['headers'] = self.headers
+        #TODO add a decorator for the optional variables.
+        if isinstance(self.headers, str):
+            inputs['headers'] = convert_header_str_to_dict(self.headers)
         elif callable(self.headers):
             inputs['headers'] = self.headers()  # Assuming 'headers' is set to a callback function
         else:
@@ -93,6 +126,7 @@ content: ""
             self.output = None
 
         self.is_output_fresh = True if self.output else False
+        self.output = str(self.output) #chaneg the output to str
 
     def get_output(self):
         """Retrieve the component's output if it is fresh."""

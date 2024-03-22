@@ -10,46 +10,44 @@ from components.base_component import BaseComponent
 
 class HTTPPostComponent(BaseComponent):
     component_schema = r"""
+   {
+  "name": "HTTP_API_Post",
+  "description": "A component designed to initiate actions on third-party websites by sending HTTP POST requests. This tool sends data to specified URLs, using headers for authentication or specifying request metadata, and a body containing the data to be submitted. It's tailored for scenarios that involve creating, updating, or submitting data to external sources.",
+  "inputs": [
     {
-"name": "HTTP_API_Post",
-"description": "A component designed to initiate actions on third-party websites by sending HTTP POST requests. This tool sends data to specified URLs, using headers for authentication or specifying request metadata, and a body containing the data to be submitted. It's tailored for scenarios that involve creating, updating, or submitting data to external sources.",
-"inputs": [
-{
-"parameter": "url",
-"description": "The web address (endpoint) to which the data is to be sent. This should be a fully qualified URL specifying the protocol (http or https), domain, and the path to the resource where the POST request will be received.",
-"type": "string",
-"example": "https://api.example.com/resource/create"
-
-content: ""
-},
-{
-"parameter": "header",
-"description": "A JSON object containing the necessary request headers. These headers may include content type declarations, authentication tokens, or any other metadata required by the target API or service to process the request properly.",
-"type": "json",
-"example": "{\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer YOUR_API_TOKEN\"}",
-
-content: ""
-},
-{
-"parameter": "body",
-"description": "The actual data to be sent in the POST request. This JSON object should contain all the necessary information the API needs to create or update resources, or perform the intended action.",
-"type": "json",
-"example": "{\"name\": \"New Resource\", \"description\": \"Details about the resource.\"}",
-
-content: ""
+      "parameter": "url",
+      "description": "The web address (endpoint) to which the data is to be sent. This should be a fully qualified URL specifying the protocol (http or https), domain, and the path to the resource where the POST request will be received.",
+      "type": "string",
+      "example": "https://api.example.com/resource/create",
+      "content": ""
+    },
+    {
+      "parameter": "header",
+      "description": "A JSON object containing the necessary request headers. These headers may include content type declarations, authentication tokens, or any other metadata required by the target API or service to process the request properly.",
+      "type": "json",
+      "example": "{\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer YOUR_API_TOKEN\"}",
+      "content": ""
+    },
+    {
+      "parameter": "body",
+      "description": "The actual data to be sent in the POST request. This JSON object should contain all the necessary information the API needs to create or update resources, or perform the intended action.",
+      "type": "json",
+      "example": "{\"name\": \"New Resource\", \"description\": \"Details about the resource.\"}",
+      "content": ""
+    }
+  ],
+  "outputs": [
+    {
+      "parameter": "result",
+      "description": "The response data from the server after processing the POST request, typically in JSON format. This includes any data returned as a result of the action performed, such as a confirmation of creation, details of the updated resource, or error messages.",
+      "type": "json",
+      "example": "{\"success\": true, \"id\": 123, \"message\": \"Resource created successfully.\"}"
+    }
+  ]
 }
-],
-"outputs": [
-{
-"parameter": "result",
-"description": "The response data from the server after processing the POST request, typically in JSON format. This includes any data returned as a result of the action performed, such as a confirmation of creation, details of the updated resource, or error messages.",
-"type": "json",
-"example": "{\"success\": true, \"id\": 123, \"message\": \"Resource created successfully.\"}"
-}
-]
-}
+
 """
-    def __init__(self, component_id, url=None, headers=None, body=None):
+    def __init__(self, component_id, url=None, headers=None, body=None,**vars):
         super().__init__(component_id)
         self.url = url
         self.headers = headers

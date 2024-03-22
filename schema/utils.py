@@ -4,8 +4,10 @@ from schema._parse import _convert_json_to_dict, _parse_cascade_raw_schema
 from schema._validate import validate_schema
 from jsonschema.exceptions import ValidationError
 
+from schema.define import llm_output_validation_schema
 
-def validate_and_parse_cascade_output(cascade_output_string, validation_schema):
+
+def validate_and_parse_cascade_output(cascade_output_string, validation_schema=llm_output_validation_schema):
     """
     Validates the LLM output against a given schema and parses it if validation passes.
     From this point, everything will be in python.

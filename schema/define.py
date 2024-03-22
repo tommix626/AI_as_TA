@@ -64,12 +64,12 @@ llm_output_validation_schema = {
                         "parameter": {"type": "string"},
                         "content": {"type": "string"},
                     },
-                    "required": ["parameter", "content"],
+                    "required": [],
                     "additionalProperties": True
                 }
             },
         },
-        "required": ["name", "inputs", "outputs"],
+        "required": ["name", "inputs"],
         "additionalProperties": True
     }
 }

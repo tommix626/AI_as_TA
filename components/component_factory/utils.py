@@ -1,6 +1,6 @@
 from collections import deque
 
-from components.component_factory.define import component_map
+from components.define import component_map
 def get_component_class(component_type):
     """Retrieve the component class from a pre-defined mapping."""
 
@@ -8,7 +8,7 @@ def get_component_class(component_type):
 
 def topological_sort(graph, in_degree):
     """Performs a topological sort on the dependency graph."""
-    queue = deque([node for node in graph if in_degree[node] == 0])
+    queue = deque([node for node in graph if in_degree[node] == 0]) #get leaf nodes
     sorted_order = []
 
     while queue:

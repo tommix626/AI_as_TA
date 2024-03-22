@@ -61,3 +61,6 @@ By focusing on these streamlined steps, you'll be able to build a functional dem
 - constructors should separate the id and the name into two fields.
 - Now we are using string as the passing, there should be also a version which generate a langchain Runnable chain as the end output using LCEL.
 - add schema for each component
+- output doesn't need to contain "outputs" field or need to be specific to the context.
+- emphasis on no chinese character? quotes especially, and no missing comma for example field (probably a few shot mistake)
+- IMP: define schema strictly: at raw stage, parsed stage, etc...
