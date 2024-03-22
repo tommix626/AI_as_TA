@@ -17,24 +17,34 @@ def _validate_inputs(schema, component_schema):
 
 def _parse_and_sort_dependencies(components: list[dict[str,str]]) -> list[str]:
     """Parses dependencies and returns a list of component IDs in topological order.
+    Raises ValueError if an invalid dependency is found.
+
     :param components: a parsed_cascade_output containing a list of components' schema.
     :return: a list of id of component in order.
     """
     graph = defaultdict(list)
     in_degree = defaultdict(int)  # Keep track of in-degrees for topological sort
+    component_ids = {component["id"] for component in components}  # Collect all component IDs for validation
 
     # Parse dependencies to construct the graph
     for component in components:
         component_id = component["id"]
-        for param in component.get("parameters", {}).values():
-            if isinstance(param, str) and param.startswith("##"):
-                dependency_id = param[2:]
+        for param_value in component.get("parameters", {}).values():
+            if isinstance(param_value, str) and param_value.startswith("##"):
+                dependency_id = param_value[2:]
+                if dependency_id not in component_ids:
+                    raise ValueError(f"Invalid dependency ID '{dependency_id}' in component '{component_id}'.")
                 graph[dependency_id].append(component_id)
                 in_degree[component_id] += 1
 
     # Perform topological sort
-    return topological_sort(graph, in_degree)
+    sorted_ids = topological_sort(graph, in_degree)
 
+    # Verify all components are included in the sort (catches isolated nodes)
+    if set(sorted_ids) != component_ids:
+        raise ValueError("Not all components are connected in the dependency graph.")
+
+    return sorted_ids
 
 class ComponentFactory:
     """
@@ -78,6 +88,7 @@ class ComponentFactory:
                     # Setup callback or direct assignment as needed
                     callback = lambda: upstream_component.get_output()
                     setattr(component, param_name, callback)
+                    component.upstream_dependency.append(upstream_component)
                 else:
                     logging.warning(
                         f"Upstream component ID= {upstream_id} not found when setting up param: {param_name}.")

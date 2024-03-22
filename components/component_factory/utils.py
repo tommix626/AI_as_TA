@@ -24,3 +24,4 @@ def topological_sort(graph, in_degree):
         return sorted_order
     else:
         raise ValueError("A cyclic dependency was detected among the components.")
+

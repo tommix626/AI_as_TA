@@ -1,7 +1,8 @@
 import pytest
 
-from schema._validate import validate_and_parse_cascade_output
 from schema.define import *
+from schema.utils import validate_and_parse_cascade_output
+
 
 # Sample validation schema as defined previously or import it if it's defined elsewhere
 
@@ -12,7 +13,7 @@ def test_successful_validation_and_parsing():
     llm_output_string = """
     [
         {
-            "name": "SampleComponent",
+            "name": "SampleComponent@1234",
             "inputs": [
                 {
                     "parameter": "sampleInput",
@@ -35,12 +36,14 @@ def test_successful_validation_and_parsing():
     assert result[0]["inputs"]["sampleInput"] == "test input content"
     assert result[0]["outputs"]["sampleOutput"] == "test output content"
 
+
 def test_failure_invalid_json_format():
     llm_output_string = """
     { "invalid": "json" }  # Intentionally malformed for this test case
     """
     result = validate_and_parse_cascade_output(llm_output_string, llm_output_validation_schema)
     assert result is None
+
 
 def test_failure_validation_error():
     # This string misses required 'content' field in inputs and outputs
@@ -64,8 +67,8 @@ def test_failure_validation_error():
     result = validate_and_parse_cascade_output(llm_output_string, llm_output_validation_schema)
     assert result is None
 
-# Additional tests can be defined here to cover more scenarios
 
+# Additional tests can be defined here to cover more scenarios
 
 
 def test_missing_name_field():
@@ -85,6 +88,7 @@ def test_missing_name_field():
     result = validate_and_parse_cascade_output(schema_string_missing_name, llm_output_validation_schema)
     assert result is None, "Expected failure when 'name' field is missing."
 
+
 def test_incorrect_structure():
     # Schema string with an incorrect structure (components not wrapped in a list)
     schema_string_incorrect_structure = r"""
@@ -96,6 +100,7 @@ def test_incorrect_structure():
     """
     result = validate_and_parse_cascade_output(schema_string_incorrect_structure, llm_output_validation_schema)
     assert result is None, "Expected failure with incorrect schema structure."
+
 
 def test_invalid_content_type():
     # Schema string with invalid content type for "content" (expected string, got object)

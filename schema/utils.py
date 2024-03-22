@@ -1,6 +1,6 @@
 import json
 
-from schema._parse import _convert_json_to_dict, _parse_llm_generated_schema
+from schema._parse import _convert_json_to_dict, _parse_cascade_raw_schema
 from schema._validate import validate_schema
 from jsonschema.exceptions import ValidationError
 
@@ -25,12 +25,11 @@ def validate_and_parse_cascade_output(cascade_output_string, validation_schema):
         print("LLM output validation passed.")
 
         # Parse the validated LLM output
-        components = _parse_llm_generated_schema(cascade_output)
+        components = _parse_cascade_raw_schema(cascade_output)
         return components
 
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e.msg}")
-        raise json.JSONDecodeError
     except ValidationError as e:
         print(f"LLM output validation error: {e.message}")
 
