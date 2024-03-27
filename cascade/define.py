@@ -115,55 +115,55 @@ Consider the following examples for clarification, including abbreviated schemas
 
 
 thinker_few_shot_examples = [
-    {
-        "user": "thinker1",
-        "assistant": "thinker1"
-    },
-    {
-        "user": "thinker2",
-        "assistant": "thinker2"
-    },{
-        "user": "thinker3",
-        "assistant": "thinker3"
-    },{
-        "user": "thinker4",
-        "assistant": "thinker4"
-    }
+    # {
+    #     "user": "thinker1",
+    #     "assistant": "thinker1"
+    # },
+    # {
+    #     "user": "thinker2",
+    #     "assistant": "thinker2"
+    # },{
+    #     "user": "thinker3",
+    #     "assistant": "thinker3"
+    # },{
+    #     "user": "thinker4",
+    #     "assistant": "thinker4"
+    # }
 ]
 
-builder_system_instruction = "%thinker_system_instruction%"
+builder_system_instruction = r"""You are a model that works on pinning down the actual workflow from the implementation perspective. you translate the instruction into a workable flow, defining the components to use and how they are constructed. the current toolkit that is available to use are LangChain, vectorStorage, openAIAgents, HTTPAPIs, PromptBuilder, and JHU's APIs, specifically targeting the Piazza API for class discussions, the CourseLore API for course content management and student engagement, and email sending functions to specific students or faculties at JHU. You only need to provide a very basic and simple skeleton. Trying to Use one tool to complete as much as possible, and only define the name and the downstream. DON’T USE ANY UNNECESSARY TOOLS. Here's the information of the overall procedure, you need to use a rigorous json output to define this graph."""
 
 builder_few_shot_examples = [
-    {
-        "user": "builder_1",
-        "assistant": "builder_1"
-    },
-    {
-        "user": "builder_2",
-        "assistant": "builder_2"
-    },{
-        "user": "builder_3",
-        "assistant": "builder_3"
-    },{
-        "user": "builder_4",
-        "assistant": "builder_4"
-    }
+    # {
+    #     "user": "builder_1",
+    #     "assistant": "builder_1"
+    # },
+    # {
+    #     "user": "builder_2",
+    #     "assistant": "builder_2"
+    # },{
+    #     "user": "builder_3",
+    #     "assistant": "builder_3"
+    # },{
+    #     "user": "builder_4",
+    #     "assistant": "builder_4"
+    # }
 ]
 
-constructor_system_instruction = "%constructor_system_instruction%"
+constructor_system_instruction = r"""You are a model tasked with filling in the detailed content of a langchain component’s inputs in an automated graph flow. Your primary focus is on updating the "context" field within all inputs of the provided schema, based on the descriptions and given context. When an input requires the output of another component, denote this by filling the "content" field with "##Component_id". Ensure your responses are formatted according to JSON schema standards, facilitating integration into the larger project structure. Do not output anything besides the updated JSON."""
 constructor_few_shot_examples = [
-    {
-        "user": "1",
-        "assistant": "1"
-    },
-    {
-        "user": "2",
-        "assistant": "2"
-    },{
-        "user": "3",
-        "assistant": "3"
-    },{
-        "user": "4",
-        "assistant": "4"
-    }
+    # {
+    #     "user": "1",
+    #     "assistant": "1"
+    # },
+    # {
+    #     "user": "2",
+    #     "assistant": "2"
+    # },{
+    #     "user": "3",
+    #     "assistant": "3"
+    # },{
+    #     "user": "4",
+    #     "assistant": "4"
+    # }
 ]

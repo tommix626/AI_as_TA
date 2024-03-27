@@ -31,7 +31,7 @@ class CascadeModel:
         self.instructions = None
         self.session = None  # Placeholder for a session object if needed
 
-    def call_model(self, prompt):
+    def call_model(self, messages):
         """
         Sends the prompt to the specified chat model and retrieves the output.
 
@@ -44,10 +44,10 @@ class CascadeModel:
         openai.api_key = self.api_key
         response = openai.ChatCompletion.create(
             model=self.model_name,
-            messages=[{"role": "user", "content": prompt}]
+            messages=messages
         )
 
-        last_message = response['choices'][0]['messages'][-1]['content'] if response['choices'][0]['messages'] else ""
+        last_message = response['choices'][0]['message']['content'] if response['choices'][0]['message'] else ""
         return last_message
 
     def execute(self, additional_info):

@@ -12,7 +12,7 @@ class ConstructorModel(CascadeModel):
         self.instructions = constructor_system_instruction
         self.few_shot_examples = constructor_few_shot_examples
 
-    def prepare_prompt(self, builder_output_context,builder_output_relationships):
+    def prepare_prompt(self, builder_output, builder_output_context=None,builder_output_relationships=None): #TODO parse the output
         messages = []
 
         prompt = self.instructions + "\n\n"
@@ -26,9 +26,11 @@ class ConstructorModel(CascadeModel):
         # Add few-shot examples to the message history
         messages = self.add_few_shot_examples(messages)
 
-        input_prompt = ""
-        input_prompt += "**Context:**\n" + builder_output_context + "\n\n"
-        input_prompt += "**The relationships are as follows:**\n" + builder_output_relationships + "\n\n"
+        # input_prompt = ""
+        # input_prompt += "**Context:**\n" + builder_output_context + "\n\n"
+        # input_prompt += "**The relationships are as follows:**\n" + builder_output_relationships + "\n\n"
+        input_prompt = builder_output
+
         messages.append({"role": "user", "content": input_prompt})
 
         return messages
