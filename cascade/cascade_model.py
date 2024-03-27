@@ -31,29 +31,34 @@ class CascadeModel:
         self.instructions = None
         self.session = None  # Placeholder for a session object if needed
 
-
     def call_model(self, prompt):
         """
-        Sends the prompt to the specified LLM model and retrieves the output.
+        Sends the prompt to the specified chat model and retrieves the output.
 
         Parameters:
         - prompt (str): The prompt to send to the model.
 
         Returns:
-        - output (dict): The model's output, parsed from JSON.
+        - output (str): The last response from the assistant.
         """
         openai.api_key = self.api_key
-        response = openai.Completion.create(
-            engine=self.model_name,
-            prompt=prompt,
-            temperature=0.5,
-            max_tokens=1024
+        response = openai.ChatCompletion.create(
+            model=self.model_name,
+            messages=[{"role": "user", "content": prompt}]
         )
-        return json.loads(response)
+
+        last_message = response['choices'][0]['messages'][-1]['content'] if response['choices'][0]['messages'] else ""
+        return last_message
 
     def execute(self, additional_info):
         """
-        The main execution method that should prepares the prompt, calls the model, and
+        The main execution method that should prepare the prompt, calls the model, and
         processes the output.
         """
         raise NotImplementedError("This method should be implemented by subclasses.")
+
+    def add_few_shot_examples(self,messages):
+        for example in self.few_shot_examples:
+            messages.append({"role": "user", "content": example['user']})
+            messages.append({"role": "assistant", "content": example['assistant']})
+        return messages

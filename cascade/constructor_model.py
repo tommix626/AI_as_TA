@@ -19,15 +19,17 @@ class ConstructorModel(CascadeModel):
         for component_name, component_cls in self.component_map.items():
             prompt += f"**{component_name}**\n{component_cls.component_schema}\n\n"
         # prompt += "\n".join(self.few_shot_examples) + "\n\n"
-        prompt += "**Context:**\n" + builder_output_context + "\n\n"
-        prompt += "**The relationships are as follows:**\n" + builder_output_relationships + "\n\n"
-        prompt += "Now generate the result for other components used in this flow:"
+
+        prompt += "Now according to the context and relationship, generate the resulting schema for all components used in the flow in a Json Array:"
 
         messages.append({"role": "system", "content": prompt})
-        # Add few-shot examples to the message history TODO: factor out as a base method
-        for example in self.few_shot_examples:
-            messages.append({"role": "assistant", "content": example['assistant']})
-            messages.append({"role": "user", "content": example['user']})
+        # Add few-shot examples to the message history
+        messages = self.add_few_shot_examples(messages)
+
+        input_prompt = ""
+        input_prompt += "**Context:**\n" + builder_output_context + "\n\n"
+        input_prompt += "**The relationships are as follows:**\n" + builder_output_relationships + "\n\n"
+        messages.append({"role": "user", "content": input_prompt})
 
         return messages
 
@@ -35,6 +37,7 @@ class ConstructorModel(CascadeModel):
         prompt = self.prepare_prompt(builder_output)
         output_text = self.call_model(prompt)
         return output_text
+
 
 if __name__ == '__main__':
     c = ConstructorModel("tt")
