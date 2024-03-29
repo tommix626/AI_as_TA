@@ -64,3 +64,43 @@ By focusing on these streamlined steps, you'll be able to build a functional dem
 - output doesn't need to contain "outputs" field or need to be specific to the context.
 - emphasis on no chinese character? quotes especially, and no missing comma for example field (probably a few shot mistake)
 - IMP: define schema strictly: at raw stage, parsed stage, etc...
+- Need thinker's description to be more conceptual, when the component number get larger, we don't want to bombard thinker with so many detailed code, but to focus on its ability to select the correct components to use. (on TEST 2)
+- Tom change the prompt so that no extra character like \n and spaces are eliminated from the few-shot result.
+
+
+# TEST Cascade
+
+```
+"Instructor: Do a summary for all the Courselore posts that have been posted in the past 4 hours and send an email to every students about this summary"
+Thinker Output: 
+        NO, the idea is infeasible
+
+        The current tech stack does not include a specific tool for sending emails directly to students. To implement this idea successfully, an email sending service or SMTP API would be necessary, which is not provided in the available components. Additional tools capable of handling email functionalities would be required for the seamless execution of this task.
+Builder Output: {
+ "error": "Email functionality not supported with the existing components. Additional tools are required for sending emails directly to students."
+}
+Constructor Output: {
+    "error": "Email functionality not supported with the existing components. Additional tools are required for sending emails directly to students."
+}
+```
+
+```
+"Instructor: Do a summary for the newest 5 posts from Mastodon and send me a summary of those post with the role of a morning news reporter. I will listen to your summarization while eating breakfast"
+
+Thinker Output: 
+        NO, the idea is infeasible
+
+        The current toolkit provided does not include a direct integration with the Mastodon social network API (HTTP_API_Get does not have a predefined Mastodon endpoint). To summarize the newest 5 posts from Mastodon, we would need a specific tool or API designed for interacting with Mastodon's data. 
+
+        To achieve this idea feasibly, additional components capable of interfacing with Mastodon's API or similar social media platforms would be required. These tools could provide access to the recent posts, facilitate their analysis, and assist in generating a morning news reporter-style summary for the instructor.
+Builder Output: {
+  "error": "Additional components for Mastodon API integration are required for the feasibility of this idea. The current toolkit does not support direct interaction with the Mastodon social network API."
+}
+Constructor Output: {
+    "error": "Additional components for Mastodon API integration are required for the feasibility of this idea. The current toolkit does not support direct interaction with the Mastodon social network API."
+}
+```
+
+```
+
+```
