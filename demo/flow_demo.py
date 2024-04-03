@@ -85,6 +85,72 @@ input_schemas = r"""
 
 """
 
+input_schemas = r"""
+[
+    {
+        "name": "HTTP_API_Get@5478",
+        "description": "A component designed to retrieve information from the Mastodon social network by initiating HTTP GET requests. It fetches the five most recent posts from Mastodon using the specified endpoint and limit parameters.",
+        "inputs": [
+            {
+                "parameter": "url",
+                "content": "https://mastodon.social/api/v1/timelines/public?limit=5"
+            },
+            {
+                "parameter": "headers",
+                "content": ""
+            }
+        ],
+        "outputs": [
+            {
+                "parameter": "result",
+                "description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from the Mastodon social network, encompassing data, metadata, or any errors encountered.",
+                "type": "json",
+                "example": "{ \"posts\": [{ \"id\": 1, \"content\": \"Example post content 1\" }] }"
+            }
+        ]
+    },
+    {
+        "name": "OpenAIAgent@8321",
+        "description": "A specialized language model tailored for analyzing content and themes of received posts. It processes and extracts essential information from the retrieved Mastodon posts.",
+        "inputs": [
+            {
+                "parameter": "input_system_prompt",
+                "content": "Analyzing the content and themes of the most recent Mastodon posts to extract key information and trending topics."
+            },
+            {
+                "parameter": "input_user_prompt",
+                "content": "##HTTP_API_Get@5478"
+            },
+            {
+                "parameter": "temperature",
+                "content": "0.3"
+            }
+        ]
+    },
+    {
+        "name": "PromptBuilder@8765",
+        "description": "A utility designed to construct a morning news report-style summary from the analyzed Mastodon posts. It formats the information for a news reporter presentation.",
+        "inputs": [
+            {
+                "parameter": "template_prompt",
+                "content": "Good morning! This is your news reporter with the latest updates. Today's headlines from Mastodon: {var1}. Now for the detailed news highlights: {var2}. Concluding with trending topics and sentiments from Mastodon posts."
+            },
+            {
+                "parameter": "var1",
+                "content": "##HTTP_API_Get@5478"
+            },
+            {
+                "parameter": "var2",
+                "content": "##OpenAIAgent@8321"
+            },
+            {
+                "parameter": "var3",
+                "content": ""
+            }
+        ]
+    }
+]
+"""
 
 
 if __name__ == '__main__':

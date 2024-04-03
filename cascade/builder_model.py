@@ -13,7 +13,7 @@ class BuilderModel(CascadeModel):
         self.instructions = builder_system_instruction
         self.few_shot_examples = builder_few_shot_examples
 
-    def prepare_prompt(self, thinker_output):
+    def prepare_prompt(self, goal, thinker_output):
         messages = []
 
         prompt = self.instructions + "\n\n"
@@ -25,11 +25,11 @@ class BuilderModel(CascadeModel):
         # Add few-shot examples to the message history
         messages = self.add_few_shot_examples(messages)
 
-        messages.append({"role": "user", "content": thinker_output})
+        messages.append({"role": "user", "content": goal + thinker_output})
 
         return messages
 
-    def execute(self, thinker_output):
+    def execute(self, goal, thinker_output):
         """
         Processes the output from the thinker model and prepares it for the constructor model.
 
@@ -39,7 +39,7 @@ class BuilderModel(CascadeModel):
         Returns:
         - output_text (str): The processed output ready for the constructor model.
         """
-        prompt = self.prepare_prompt(thinker_output)
+        prompt = self.prepare_prompt(goal,thinker_output)
         output_text = self.call_model(prompt)
         return output_text
 

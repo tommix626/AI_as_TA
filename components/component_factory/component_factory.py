@@ -124,6 +124,7 @@ class ComponentFactory:
                 raise RuntimeError
 
             if self.create_component(component_schema) is None:
+                logging.error(f"Component creation error, component_id={component_id}.")
                 return False
 
         # last one should be the entry point of the flow. FIXME

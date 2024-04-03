@@ -4,7 +4,7 @@ class PromptBuilderComponent(BaseComponent):
     component_schema = r"""
     {
   "name": "PromptBuilder",
-  "description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots.",
+  "description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots. The variables should always be three variables named var1, var2, and var3. You may assign meaning to those variables as you like. If you don't use all of them, leave them as empty string.",
   "inputs": [
     {
       "parameter": "template_prompt",

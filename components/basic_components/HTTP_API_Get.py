@@ -51,8 +51,8 @@ class HTTPGetComponent(BaseComponent):
           "value": "https://courselore.com/get?id=rorih4jfgee&limit=-1"
         },
         {
-          "refName": "CourseloreGetUnreadNumber",
-          "description": "Endpoint to get the number of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
+          "refName": "CourseloreGetUnreadPost",
+          "description": "Endpoint to get the content of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
           "value": "https://courselore.com/get?id=rorih4jfgee"
         },
         {
@@ -67,7 +67,7 @@ class HTTPGetComponent(BaseComponent):
     },
     {
       "parameter": "headers",
-      "description": "A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
+      "description": "Optional, A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
       "type": "json",
       "example": "{\"Authorization\": \"Bearer YOUR_API_TOKEN\", \"Content-Type\": \"application/json\"}",
       "content": ""
