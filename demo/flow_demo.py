@@ -152,6 +152,80 @@ input_schemas = r"""
 ]
 """
 
+# input_schemas = r"""
+# [
+#     {
+#         "name": "HTTP_API_Get_7645",
+#         "description": "A component designed to retrieve information from the Mastodon social network by initiating HTTP GET requests. It fetches the five newest posts for analysis in this workflow.",
+#         "inputs": [
+#             {
+#                 "parameter": "url",
+#                 "content": "https://mastodon.social/api/v1/timelines/public?limit=5"
+#             },
+#             {
+#                 "parameter": "headers",
+#                 "content": ""
+#             }
+#         ],
+#         "outputs": [
+#             {
+#                 "parameter": "result",
+#                 "description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from Mastodon, encompassing the data of the five latest posts.",
+#                 "type": "json",
+#                 "example": "{ \"posts\": [{ \"id\": 1, \"content\": \"Example post content 1\" }, { \"id\": 2, \"content\": \"Example post content 2\" }] }"
+#             }
+#         ]
+#     },
+#     {
+#         "name": "OpenAIAgent_2276",
+#         "description": "A specialized language model tailored for content analysis and extraction. It processes the retrieved posts from HTTP_API_Get_7645 to extract key information, themes, and details.",
+#         "inputs": [
+#             {
+#                 "parameter": "input_system_prompt",
+#                 "content": "You are tasked with analyzing the content of the five newest Mastodon posts to extract important details and themes."
+#             },
+#             {
+#                 "parameter": "input_user_prompt",
+#                 "content": "##HTTP_API_Get_7645"
+#             },
+#             {
+#                 "parameter": "temperature",
+#                 "content": "0.5"
+#             }
+#         ]
+#     },
+#     {
+#         "name": "PromptBuilder_5402",
+#         "description": "A utility designed for structuring summaries in a news report format. It mimics a morning news reporter's style when formatting the extracted post details.",
+#         "inputs": [
+#             {
+#                 "parameter": "template_prompt",
+#                 "content": "Good morning! Here are the latest updates from Mastodon: {var1}. These posts cover various topics including {var2}. Stay tuned for the detailed summaries."
+#             },
+#             {
+#                 "parameter": "var1",
+#                 "content": "##OpenAIAgent_2276"
+#             },
+#             {
+#                 "parameter": "var2",
+#                 "content": "##OpenAIAgent_2276"
+#             },
+#             {
+#                 "parameter": "var3",
+#                 "content": ""
+#             }
+#         ],
+#         "outputs": [
+#             {
+#                 "parameter": "parsed_prompt",
+#                 "description": "The structured news report format ready for delivery. It encompasses the key details of the five newest Mastodon posts in a format suitable for a morning news broadcast.",
+#                 "type": "string",
+#                 "example": "Good morning! Here are the latest updates from Mastodon: [Summarized Post 1, Summarized Post 2, Summarized Post 3, Summarized Post 4, Summarized Post 5]. These posts cover various topics including [Theme 1, Theme 2, Theme 3]. Stay tuned for the detailed summaries."
+#             }
+#         ]
+#     }
+# ]
+# """
 
 if __name__ == '__main__':
     print("Parsing schemas...")

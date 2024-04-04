@@ -208,7 +208,7 @@ builder_system_instruction = r"""You are a model that works on pinning down the 
 OpenAIAgent, HTTP_API_Get, HTTP_API_Post, PromptBuilder.
 
 Now, I provide each available component with a schemas for your understanding of their capabilities. Do not infer anything more than is described, and do not invent things that violates or are not in the schema:
-You only need to provide a very basic and simple skeleton. Trying to Use one tool to complete as much as possible, and only define the name and the downstream. DON’T USE ANY UNNECESSARY TOOLS. Here's the information of the overall procedure, you need to use a rigorous json output to define this graph.
+You only need to provide a very basic and simple skeleton. Trying to Use one tool to complete as much as possible, and only define the name and the downstream. DON’T USE ANY UNNECESSARY TOOLS or unnamed tools even if they are suggested in the input. Here's the information of the overall procedure, you need to use a rigorous json output to define this graph.
 
 **OpenAIAgent**
 {
@@ -369,7 +369,7 @@ Analysis:
         
         so, YES, the idea is feasible.""",
         "assistant": r"""Context:
-use HTTP_API_Get@2453 to get posts from piazza. The result is sent to PromptBuilder_9084 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent_8734 to get the summary. Then the output should be directed into the HTTP_API_Post_2399 to post back to piazza with appropriate endpoints.
+use HTTP_API_Get@2453 to get posts from piazza. The result is sent to PromptBuilder@9084 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent@8734 to get the summary. Then the output should be directed into the HTTP_API_Post@2399 to post back to piazza with appropriate endpoints.
 In summary, this flow utilizes components to interact with an external service, fetch unread posts, craft a response, and post the response back.
 
 The relationships are as follows:
@@ -388,15 +388,15 @@ The relationships are as follows:
 
         so, YES, the idea is feasible""",
         "assistant": r"""Context:
-use HTTP_API_Get_4334 to get posts from piazza. The result is sent to PromptBuilder_1122 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent_6836 to get a post-by-post judgement of answer addressing key points and relevant questions sufficiently.
-Then both the raw post from HTTP_API_Get_4334 and the summarized string from OpenAIAgent_6836 is sent to PromptBuilder_9385 to have another instruction focusing on generating a fluent paragraph of summarization. The instruction is sent to OpenAIAgent_0099 for a final summary of the posts that needs attention and the reasons.
+use HTTP_API_Get@4334 to get posts from piazza. The result is sent to PromptBuilder@1122 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent@6836 to get a post-by-post judgement of answer addressing key points and relevant questions sufficiently.
+Then both the raw post from HTTP_API_Get@4334 and the summarized string from OpenAIAgent@6836 is sent to PromptBuilder@9385 to have another instruction focusing on generating a fluent paragraph of summarization. The instruction is sent to OpenAIAgent@0099 for a final summary of the posts that needs attention and the reasons.
 In summary, this flow uses a double layer llm cascade, to judge the post's status (satisfying or not) and generate an overall summary.
 The relationships are as follows:
-- {name=HTTP_API_Get_4334; downstream=PromptBuilder_1122}
-- {name=PromptBuilder_1122; downstream=OpenAIAgent_6836}
-- {name=OpenAIAgent_6836; downstream=PromptBuilder_9385}
-- {name=HTTP_API_Get_4334; downstream=PromptBuilder_9385}
-- {name=PromptBuilder_9385; downstream=OpenAIAgent_0099}
+- {name=HTTP_API_Get@4334; downstream=PromptBuilder@1122}
+- {name=PromptBuilder@1122; downstream=OpenAIAgent@6836}
+- {name=OpenAIAgent@6836; downstream=PromptBuilder@9385}
+- {name=HTTP_API_Get@4334; downstream=PromptBuilder@9385}
+- {name=PromptBuilder@9385; downstream=OpenAIAgent@0099}
         """
     },
     # {
@@ -411,7 +411,7 @@ The relationships are as follows:
 constructor_system_instruction = r"""You are a model tasked with filling in the detailed content of a langchain component’s inputs in an automated graph flow. Your primary focus is on updating the "context" field within all inputs of the provided schema, based on the descriptions and given context, providing a coherent flow of data between components.
 
 Here are some instruction you should follow strictly.
-When an input requires the output of another component, denote this by filling the "content" field with "##Component_id". 
+When an input requires the output of another component, denote this by filling the "content" field with "##Component_id".  It is the only way of accessing output, there will only be output per component.
 Ensure each upstream element appears in one of the input of the downstream component.
 Ensure your responses are formatted according to JSON schema standards, facilitating integration into the larger project structure. Do not output anything besides the updated JSON. It should be a json dict at the top level, each element is a json object describing component's schema with content filled. Your whole output will be directly parsed with the json.loads() function in python. Make sure it passes."""
 constructor_few_shot_examples = [
@@ -426,18 +426,18 @@ Analysis:
         
         so, YES, the idea is feasible.
 Context:
-use HTTP_API_Get_2453 to get posts from piazza. The result is sent to PromptBuilder_9084 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent_8734 to get the summary. Then the output should be directed into the HTTP_API_Post_2399 to post back to piazza with appropriate endpoints.
+use HTTP_API_Get@2453 to get posts from piazza. The result is sent to PromptBuilder@9084 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent@8734 to get the summary. Then the output should be directed into the HTTP_API_Post@2399 to post back to piazza with appropriate endpoints.
 In summary, this flow utilizes components to interact with an external service, fetch unread posts, craft a response, and post the response back.
 
 The relationships are as follows:
-- {name=HTTP_API_Get_2453; downstream=PromptBuilder_9084}
-- {name=PromptBuilder_9084; downstream=OpenAIAgent_8734}
-- {name=OpenAIAgent_8734; downstream=HTTP_API_Post_2399}
+- {name=HTTP_API_Get@2453; downstream=PromptBuilder@9084}
+- {name=PromptBuilder@9084; downstream=OpenAIAgent@8734}
+- {name=OpenAIAgent@8734; downstream=HTTP_API_Post@2399}
         """,
         "assistant": r"""
             [
             {
-              "name": "HTTP_API_Get_2453",
+              "name": "HTTP_API_Get@2453",
               "description": "[Here, it is used to get the latest post from Piazza.] A component designed to retrieve information from third-party websites by initiating HTTP GET requests. It enables sending requests to specified URLs and optionally includes headers for authentication or specifying request metadata. Tailored for scenarios requiring data extraction from external sources. ",
               "inputs": [
                 {
@@ -459,8 +459,8 @@ The relationships are as follows:
               ]
             },
             {
-              "name": "PromptBuilder_9084",
-              "description": "[Here, building a user prompt for OpenAIAgent_8734.] A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots. The variables should always be three variables named var1, var2, and var3. You may assign meaning to those variables as you like. If you don't use all of them, leave them as empty string.",
+              "name": "PromptBuilder@9084",
+              "description": "[Here, building a user prompt for OpenAIAgent@8734.] A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots. The variables should always be three variables named var1, var2, and var3. You may assign meaning to those variables as you like. If you don't use all of them, leave them as empty string.",
               "inputs": [
                 {
                   "parameter": "template_prompt",
@@ -468,7 +468,7 @@ The relationships are as follows:
                 },
                 {
                   "parameter": "var1",
-                  "content": "##HTTP_API_Get_2453"
+                  "content": "##HTTP_API_Get@2453"
                 },
                 {
                     "name": "var2",
@@ -489,7 +489,7 @@ The relationships are as follows:
               ]
             },
             {
-              "name": "OpenAIAgent_8734",
+              "name": "OpenAIAgent@8734",
               "description": "[Here, the agent is prompted to generate summary of the piazza posts.] A specialized language model tailored for executing specific tasks by processing structured inputs. This agent interprets and acts upon user-defined prompts and data inputs using adjustable creativity settings.",
               "inputs": [
                 {
@@ -498,7 +498,7 @@ The relationships are as follows:
                 },
                 {
                   "parameter": "input_user_prompt",
-                  "content": "##PromptBuilder_9084"
+                  "content": "##PromptBuilder@9084"
                 },
                 {
                   "parameter": "temperature",
@@ -507,7 +507,7 @@ The relationships are as follows:
               ]
             },
             {
-              "name": "HTTP_API_Post_2399",
+              "name": "HTTP_API_Post@2399",
               "description": "[Here, we use the piazza api endpoint to create a summarization post] A component designed to initiate actions on third-party websites by sending HTTP POST requests. This tool sends data to specified URLs, using headers for authentication or specifying request metadata, and a body containing the data to be submitted. It's tailored for scenarios that involve creating, updating, or submitting data to external sources.",
               "inputs": [
                 {
@@ -520,7 +520,7 @@ The relationships are as follows:
                 },
                 {
                   "parameter": "body",
-                  "content": "##OpenAIAgent_8734"
+                  "content": "##OpenAIAgent@8734"
                 }
               ],
               "outputs": [
@@ -545,20 +545,20 @@ The relationships are as follows:
 
         so, YES, the idea is feasible
 Context:
-use HTTP_API_Get_4334 to get posts from piazza. The result is sent to PromptBuilder_1122 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent_6836 to get a post-by-post judgement of answer addressing key points and relevant questions sufficiently.
-Then both the raw post from HTTP_API_Get_4334 and the summarized string from OpenAIAgent_6836 is sent to PromptBuilder_9385 to have another instruction focusing on generating a fluent paragraph of summarization. The instruction is sent to OpenAIAgent_0099 for a final summary of the posts that needs attention and the reasons.
+use HTTP_API_Get@4334 to get posts from piazza. The result is sent to PromptBuilder@1122 to have instructions wrapped around. The resulting string is then sent to the OpenAIAgent@6836 to get a post-by-post judgement of answer addressing key points and relevant questions sufficiently.
+Then both the raw post from HTTP_API_Get@4334 and the summarized string from OpenAIAgent@6836 is sent to PromptBuilder@9385 to have another instruction focusing on generating a fluent paragraph of summarization. The instruction is sent to OpenAIAgent@0099 for a final summary of the posts that needs attention and the reasons.
 In summary, this flow uses a double layer llm cascade, to judge the post's status (satisfying or not) and generate an overall summary.
 The relationships are as follows:
-- {name=HTTP_API_Get_4334; downstream=PromptBuilder_1122}
-- {name=PromptBuilder_1122; downstream=OpenAIAgent_6836}
-- {name=OpenAIAgent_6836; downstream=PromptBuilder_9385}
-- {name=HTTP_API_Get_4334; downstream=PromptBuilder_9385}
-- {name=PromptBuilder_9385; downstream=OpenAIAgent_0099}
+- {name=HTTP_API_Get@4334; downstream=PromptBuilder@1122}
+- {name=PromptBuilder@1122; downstream=OpenAIAgent@6836}
+- {name=OpenAIAgent@6836; downstream=PromptBuilder@9385}
+- {name=HTTP_API_Get@4334; downstream=PromptBuilder@9385}
+- {name=PromptBuilder@9385; downstream=OpenAIAgent@0099}
         """,
         "assistant": r"""
 [
     {
-        "name": "HTTP_API_Get_4334",
+        "name": "HTTP_API_Get@4334",
         "description": "A component designed to retrieve information from CourseLore by initiating HTTP GET requests. This is used to fetch posts made in the last 4 hours, involving authentication with the API and querying posts with a timestamp filter.",
         "inputs": [
             {
@@ -580,8 +580,8 @@ The relationships are as follows:
         ]
     },
     {
-        "name": "PromptBuilder_1122",
-        "description": "A utility designed to construct prompts for OpenAIAgent_6836, to judge if a post has been answered satisfactorily. It dynamically inserts specified string variables into a template, generating customized prompts.",
+        "name": "PromptBuilder@1122",
+        "description": "A utility designed to construct prompts for OpenAIAgent@6836, to judge if a post has been answered satisfactorily. It dynamically inserts specified string variables into a template, generating customized prompts.",
         "inputs": [
             {
                 "parameter": "template_prompt",
@@ -589,7 +589,7 @@ The relationships are as follows:
             },
             {
                 "parameter": "var1",
-                "content": "##HTTP_API_Get_4334"
+                "content": "##HTTP_API_Get@4334"
             },
             {
                 "parameter": "var2",
@@ -603,15 +603,15 @@ The relationships are as follows:
         "outputs": [
             {
                 "parameter": "parsed_prompt",
-                "description": "The fully constructed prompt, with placeholders within the template string replaced by the corresponding variables. This output is ready to be passed to OpenAIAgent_6836 for processing.",
+                "description": "The fully constructed prompt, with placeholders within the template string replaced by the corresponding variables. This output is ready to be passed to OpenAIAgent@6836 for processing.",
                 "type": "string",
                 "example": "Given the following post: Example post content and its answer: Example answer content, determine if the answer addresses the key points and questions raised sufficiently."
             }
         ]
     },
     {
-        "name": "OpenAIAgent_6836",
-        "description": "A specialized language model tailored for executing specific tasks by processing structured inputs. This agent interprets the prompts from PromptBuilder_1122 to judge the sufficiency of answers in CourseLore posts.",
+        "name": "OpenAIAgent@6836",
+        "description": "A specialized language model tailored for executing specific tasks by processing structured inputs. This agent interprets the prompts from PromptBuilder@1122 to judge the sufficiency of answers in CourseLore posts.",
         "inputs": [
             {
                 "parameter": "input_system_prompt",
@@ -619,7 +619,7 @@ The relationships are as follows:
             },
             {
                 "parameter": "input_user_prompt",
-                "content": "##PromptBuilder_1122"
+                "content": "##PromptBuilder@1122"
             },
             {
                 "parameter": "temperature",
@@ -628,8 +628,8 @@ The relationships are as follows:
         ]
     },
     {
-        "name": "PromptBuilder_9385",
-        "description": "A utility designed to construct prompts for OpenAIAgent_0099, focusing on generating a fluent summary of posts needing attention. It uses input from both HTTP_API_Get_4334 and OpenAIAgent_6836.",
+        "name": "PromptBuilder@9385",
+        "description": "A utility designed to construct prompts for OpenAIAgent@0099, focusing on generating a fluent summary of posts needing attention. It uses input from both HTTP_API_Get@4334 and OpenAIAgent@6836.",
         "inputs": [
             {
                 "parameter": "template_prompt",
@@ -637,11 +637,11 @@ The relationships are as follows:
             },
             {
                 "parameter": "var1",
-                "content": "##HTTP_API_Get_4334"
+                "content": "##HTTP_API_Get@4334"
             },
             {
                 "parameter": "var2",
-                "content": "##OpenAIAgent_6836"
+                "content": "##OpenAIAgent@6836"
             },
             {
                 "parameter": "var3",
@@ -651,15 +651,15 @@ The relationships are as follows:
         "outputs": [
             {
                 "parameter": "parsed_prompt",
-                "description": "The fully constructed prompt, ready to be passed to OpenAIAgent_0099 for processing. It's designed to generate a comprehensive summary of posts that have not been answered satisfactorily.",
+                "description": "The fully constructed prompt, ready to be passed to OpenAIAgent@0099 for processing. It's designed to generate a comprehensive summary of posts that have not been answered satisfactorily.",
                 "type": "string",
                 "example": "Summarize the need for attention in the following post: Example post content and answer, based on the judgment: The answer does not address the key questions raised."
             }
         ]
     },
     {
-        "name": "OpenAIAgent_0099",
-        "description": "A specialized language model tailored for summarizing the posts needing further attention based on the assessments from OpenAIAgent_6836. It processes the prompts generated by PromptBuilder_9385.",
+        "name": "OpenAIAgent@0099",
+        "description": "A specialized language model tailored for summarizing the posts needing further attention based on the assessments from OpenAIAgent@6836. It processes the prompts generated by PromptBuilder@9385.",
         "
 
 inputs": [
@@ -669,7 +669,7 @@ inputs": [
             },
             {
                 "parameter": "input_user_prompt",
-                "content": "##PromptBuilder_9385"
+                "content": "##PromptBuilder@9385"
             },
             {
                 "parameter": "temperature",
