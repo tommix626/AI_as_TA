@@ -1,7 +1,7 @@
 import json
 
 from cascade.cascade_model import CascadeModel
-from cascade.define import builder_system_instruction, builder_few_shot_examples
+from cascade.define import builder_system_instruction, builder_few_shot_examples, builder_system_closing_instruction
 from components.define import component_map
 
 from env import global_api_keys_and_config
@@ -17,9 +17,13 @@ class BuilderModel(CascadeModel):
         messages = []
 
         prompt = self.instructions + "\n\n"
-        # TODO: add a structured builder description from the class static variable instead of harding coding it.
-        # for component_name, component_cls in self.component_map.items():
-        #     prompt += f"**{component_name}**\n{component_cls.builder_description}\n\n"
+        comp_prompt, name_prompt = "", ""
+        for component_name, component_cls in self.component_map.items():
+            if(component_name.startswith("Test")):
+                continue
+            comp_prompt += f"**{component_name}**\n{component_cls.thinker_description}\n\n"
+            name_prompt += component_name + ", "
+        prompt += name_prompt + ".\n" + comp_prompt + builder_system_closing_instruction
 
         messages.append({"role": "system", "content": prompt})
         # Add few-shot examples to the message history
@@ -46,5 +50,5 @@ class BuilderModel(CascadeModel):
 if __name__ == '__main__':
     c = BuilderModel("builder")
     thinker_output = "%This is the output from the thinker model%"
-    d = c.prepare_prompt(thinker_output)
+    d = c.prepare_prompt("Goal",thinker_output)
     print(d)

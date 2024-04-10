@@ -5,6 +5,7 @@ class BaseComponent:
         # the schema defining the component's input and output.
     }
     thinker_description = "" # TODO add the description field used for thinker.
+    builder_description = "" # TODO add the description field used for thinker.
 
     def __init__(self, component_id):
         self.component_id = component_id

@@ -36,18 +36,18 @@ input_schemas = r"""
   "inputs": [
     {
       "parameter": "template_prompt",
-      "content": "The latest Posts are:\n {var1}"
+      "content": "The latest Posts are:\n {first_var}"
     },
     {
-      "parameter": "var1",
+      "parameter": "first_var",
       "content": "##HTTP_API_Get@0A2w"
     },
     {
-      "parameter": "var2",
+      "parameter": "second_var",
       "content": ""
     },
     {
-      "parameter": "var3",
+      "parameter": "third_var",
       "content": ""
     }
   ],
@@ -133,18 +133,18 @@ input_schemas = r"""
         "inputs": [
             {
                 "parameter": "template_prompt",
-                "content": "Good morning! This is your news reporter with the latest updates. Today's headlines from Mastodon: {var1}. Now for the detailed news highlights: {var2}. Concluding with trending topics and sentiments from Mastodon posts."
+                "content": "Good morning! This is your news reporter with the latest updates. Today's headlines from Mastodon: {first_var}. Now for the detailed news highlights: {second_var}. Concluding with trending topics and sentiments from Mastodon posts."
             },
             {
-                "parameter": "var1",
+                "parameter": "first_var",
                 "content": "##HTTP_API_Get@5478"
             },
             {
-                "parameter": "var2",
+                "parameter": "second_var",
                 "content": "##OpenAIAgent@8321"
             },
             {
-                "parameter": "var3",
+                "parameter": "third_var",
                 "content": ""
             }
         ]
@@ -200,18 +200,18 @@ input_schemas = r"""
 #         "inputs": [
 #             {
 #                 "parameter": "template_prompt",
-#                 "content": "Good morning! Here are the latest updates from Mastodon: {var1}. These posts cover various topics including {var2}. Stay tuned for the detailed summaries."
+#                 "content": "Good morning! Here are the latest updates from Mastodon: {first_var}. These posts cover various topics including {second_var}. Stay tuned for the detailed summaries."
 #             },
 #             {
-#                 "parameter": "var1",
+#                 "parameter": "first_var",
 #                 "content": "##OpenAIAgent_2276"
 #             },
 #             {
-#                 "parameter": "var2",
+#                 "parameter": "second_var",
 #                 "content": "##OpenAIAgent_2276"
 #             },
 #             {
-#                 "parameter": "var3",
+#                 "parameter": "third_var",
 #                 "content": ""
 #             }
 #         ],

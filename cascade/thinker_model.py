@@ -1,7 +1,7 @@
 import json
 
 from cascade.cascade_model import CascadeModel
-from cascade.define import thinker_system_instruction, thinker_few_shot_examples
+from cascade.define import thinker_system_instruction, thinker_few_shot_examples, thinker_system_closing_instruction
 from components.define import component_map
 
 from env import global_api_keys_and_config
@@ -16,6 +16,13 @@ class ThinkerModel(CascadeModel):
         messages = []
 
         prompt = self.instructions + "\n\n"
+        comp_prompt,name_prompt = "",""
+        for component_name, component_cls in self.component_map.items():
+            if(component_name.startswith("Test")):
+                continue
+            comp_prompt += f"**{component_name}**\n{component_cls.thinker_description}\n\n"
+            name_prompt += component_name + ", "
+        prompt += name_prompt + ".\n" + comp_prompt + thinker_system_closing_instruction
 
         # TODO: add a structured thinker description from the class static variable instead of harding coding it.
         # for component_name, component_cls in self.component_map.items():

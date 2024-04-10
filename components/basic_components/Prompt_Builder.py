@@ -1,31 +1,101 @@
 from components.base_component import BaseComponent
 
 class PromptBuilderComponent(BaseComponent):
-    component_schema = r"""
+    builder_description = r"""
+    {
+"name": "PromptBuilder@{id}",
+"description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots.",
+"inputs": [
+{
+"description": "A template string containing placeholders for variables. These placeholders are identified by braces (e.g., {first_var}) and correspond to the variables provided as additional inputs. The template defines the structure of the final prompt.",
+"type": "string",
+"example": "user says {first_var}, can you respond in a {second_var} fashion?"
+},
+{
+"description": "The first variable to substitute into the template prompt. This should match the placeholder within the template string.",
+"type": "string",
+"example": "hello how are you"
+},
+{
+"description": "The second variable for substitution into the template. It fills a designated placeholder within the template to further customize the prompt.",
+"type": "string",
+"example": "friendly"
+},
+{
+"description": "An optional third variable that can be used for substitution. If the template includes a placeholder for this variable, it will be replaced accordingly. If not used, ensure the template does not include a placeholder for it.",
+"type": "string",
+"example": "adding additional context if needed"
+}
+],
+"outputs": [
+{
+"description": "The fully constructed prompt, with all placeholders within the template string replaced by the corresponding variables. This output is ready to be passed to chatbots for processing.",
+"type": "string",
+"example": "user says hello how are you, can you respond in a friendly fashion?"
+}
+]
+}
+"""
+    thinker_description = r"""
     {
   "name": "PromptBuilder",
-  "description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots. The variables should always be three variables named var1, var2, and var3. You may assign meaning to those variables as you like. If you don't use all of them, leave them as empty string.",
+  "description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots.",
   "inputs": [
     {
-      "parameter": "template_prompt",
-      "description": "A template string containing placeholders for variables. These placeholders are identified by braces (e.g., {var1}) and correspond to the variables provided as additional inputs. The template defines the structure of the final prompt.",
+      "description": "A template string containing placeholders for variables. These placeholders are identified by braces (e.g., {first_var}) and correspond to the variables provided as additional inputs. The template defines the structure of the final prompt.",
       "type": "string",
-      "example": "user says {var1}, can you respond in a {var2} fashion?"
+      "example": "user says {first_var}, can you respond in a {second_var} fashion?"
     },
     {
-      "parameter": "var1",
       "description": "The first variable to substitute into the template prompt. This should match the placeholder within the template string.",
       "type": "string",
       "example": "hello how are you"
     },
     {
-      "parameter": "var2",
       "description": "The second variable for substitution into the template. It fills a designated placeholder within the template to further customize the prompt.",
       "type": "string",
       "example": "friendly"
     },
     {
-      "parameter": "var3",
+      "description": "An optional third variable that can be used for substitution. If the template includes a placeholder for this variable, it will be replaced accordingly. If not used, ensure the template does not include a placeholder for it.",
+      "type": "string",
+      "example": "adding additional context if needed"
+    }
+  ],
+  "outputs": [
+    {
+      "description": "The fully constructed prompt, with all placeholders within the template string replaced by the corresponding variables. This output is ready to be passed to chatbots for processing.",
+      "type": "string",
+      "example": "user says hello how are you, can you respond in a friendly fashion?"
+    }
+  ]
+}
+"""
+    component_schema = r"""
+    {
+  "name": "PromptBuilder",
+  "description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots. The variables should always be three variables named first_var, second_var, and third_var. There are no other variables, only those three is available (DO NOT USE fourth_var). You may assign meaning to those variables as you like. If you don't use all of them, leave them as empty string.",
+  "inputs": [
+    {
+      "parameter": "template_prompt",
+      "description": "A template string containing placeholders for variables. These placeholders are identified by braces (e.g., {first_var}) and correspond to the variables provided as additional inputs. The template defines the structure of the final prompt.",
+      "type": "string",
+      "example": "user says {first_var}, can you respond in a {second_var} fashion?"
+    },
+    {
+      "parameter": "first_var",
+      "description": "The first variable to substitute into the template prompt. This should match the placeholder within the template string.",
+      "type": "string",
+      "example": "hello how are you"
+    },
+    {
+      "parameter": "second_var",
+      "description": "The second variable for substitution into the template. It fills a designated placeholder within the template to further customize the prompt.",
+      "type": "string",
+      "example": "friendly"
+    },
+    {
+      "parameter": "third_var",
       "description": "An optional third variable that can be used for substitution. If the template includes a placeholder for this variable, it will be replaced accordingly. If not used, ensure the template does not include a placeholder for it.",
       "type": "string",
       "example": "adding additional context if needed"
@@ -42,16 +112,16 @@ class PromptBuilderComponent(BaseComponent):
 }
 
 """
-    def __init__(self, component_id, template_prompt=None, var1=None,var2=None,var3=None, **vars):
+    def __init__(self, component_id, template_prompt=None, first_var=None,second_var=None,third_var=None, **vars):
         super().__init__(component_id)
         self.template_prompt = template_prompt
-        self.var1 = var1
-        self.var2 = var2
-        self.var3 = var3
+        self.first_var = first_var
+        self.second_var = second_var
+        self.third_var = third_var
 
     @property
     def vars(self):
-        return { "var1":self.var1,"var2":self.var2,"var3":self.var3}
+        return { "first_var":self.first_var,"second_var":self.second_var,"third_var":self.third_var}
 
     def prepare_inputs(self):
         inputs = {"template_prompt": self.template_prompt() if callable(self.template_prompt) else self.template_prompt}

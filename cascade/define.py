@@ -34,140 +34,14 @@ Currently, we have the following components:
 Usable Components: OpenAIAgent, HTTP_API_Get, HTTP_API_Post, PromptBuilder.
 
 Now, I provide each component with an abbreviated schemas for your understanding of their capabilities. Do not infer anything more than is described, and do not invent things that violates or are not in the schema:
+"""
 
-1. **OpenAIAgent**
-{
-  "name": "OpenAIAgent",
-  "description": " A smart agent that is able follow instructions and finish simple task. Underneath, A suite of tools leveraging OpenAI models for tasks ranging from text generation, language translation, to complex question answering. It's designed to interact with OpenAI's API, providing a flexible interface for implementing advanced language model functionalities.",
-  "inputs": [
-    {
-      "description": "A JSON object detailing the task type, parameters, and input text for processing. This specifies the intended use of the OpenAI model, such as generating text, translating languages, or answering questions.",
-      "type": "json",
-      "example": "{\"task\": \"text-generation\", \"prompt\": \"Write a short story about a robot.\", \"parameters\": {\"max_tokens\": 500}}"
-    }
-  ],
-  "outputs": [
-    {
-      "description": "The output from the OpenAI model based on the specified task and inputs. It includes the generated text, translation, or answer, along with any other relevant data provided by the model.",
-      "type": "json",
-      "example": "{\"generated_text\": \"Once upon a time, in a world not unlike our own...\"}"
-    }
-  ]
-}
-
-2. **HTTP_API_Get** 
-
-{
-  "name": "HTTP_API_Get",
-  "description": "A component designed to retrieve information from third-party websites by initiating HTTP GET requests. It enables sending requests to specified URLs and optionally includes headers for authentication or specifying request metadata. Tailored for scenarios requiring data extraction from external sources. Should be used for primary data acquisition tools. There's a lot of endpoints implemented in the refs section, all of which is usable",
-  "inputs": [
-    {
-      "description": "The web address (endpoint) from which information is to be retrieved. This should be a fully qualified URL specifying the protocol (http or https), domain, and path to the resource. Use the defined constant below in defs if you need",
-      "defs": [
-        {
-          "refName": "CourseloreGetPost",
-          "description": "Endpoint for retrieving a specific post from Courselore using a post ID and an optional limit parameter. Useful for fetching detailed post information.",
-          "value": "https://courselore.com/get?id=rorih4jfgee&limit=-1"
-        },
-        {
-          "refName": "CourseloreGetUnreadPost",
-          "description": "Endpoint to get the content of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
-          "value": "https://courselore.com/get?id=rorih4jfgee"
-        },
-        {
-          "refName": "MastodonSocialGetPost",
-          "description": "Endpoint to retrieve recent public posts from the Mastodon social network with a limit on the number of posts. Ideal for integrating public social feeds.",
-          "value": "https://mastodon.social/api/v1/timelines/public?limit=2"
-        }
-      ],
-      "type": "string",
-      "example": "https://api.example.com/data"
-    },
-    {
-      "description": "A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
-      "type": "json",
-      "example": "{\"Authorization\": \"Bearer YOUR_API_TOKEN\", \"Content-Type\": \"application/json\"}"
-    }
-  ],
-  "outputs": [
-    {
-      "description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from the requested URL, encompassing data, metadata, or any errors encountered during the request. It's crucial for implementing logic based on the response.",
-      "type": "json",
-      "example": "{\"data\": [{\"id\": 1, \"name\": \"Example\"}], \"meta\": {\"count\": 1}}"
-    }
-  ]
-}
-
-3. **HTTP_API_Post** 
-{
-  "name": "HTTP_API_Post",
-  "description": "A component designed to initiate actions on third-party websites by sending HTTP POST requests. This tool sends data to specified URLs, using headers for authentication or specifying request metadata, and a body containing the data to be submitted. It's tailored for scenarios that involve creating, updating, or submitting data to external sources.",
-  "inputs": [
-    {
-      "description": "The web address (endpoint) to which the data is to be sent. This should be a fully qualified URL specifying the protocol (http or https), domain, and the path to the resource where the POST request will be received.",
-      "type": "string",
-      "example": "https://api.example.com/resource/create"
-    },
-    {
-      "description": "A JSON object containing the necessary request headers. These headers may include content type declarations, authentication tokens, or any other metadata required by the target API or service to process the request properly.",
-      "type": "json",
-      "example": "{\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer YOUR_API_TOKEN\"}"
-    },
-    {
-      "description": "The actual data to be sent in the POST request. This JSON object should contain all the necessary information the API needs to create or update resources, or perform the intended action.",
-      "type": "json",
-      "example": "{\"name\": \"New Resource\", \"description\": \"Details about the resource.\"}"
-    }
-  ],
-  "outputs": [
-    {
-      "description": "The response data from the server after processing the POST request, typically in JSON format. This includes any data returned as a result of the action performed, such as a confirmation of creation, details of the updated resource, or error messages.",
-      "type": "json",
-      "example": "{\"success\": true, \"id\": 123, \"message\": \"Resource created successfully.\"}"
-    }
-  ]
-}
-
-4. **PromptBuilder** 
-{
-  "name": "PromptBuilder",
-  "description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots.",
-  "inputs": [
-    {
-      "description": "A template string containing placeholders for variables. These placeholders are identified by braces (e.g., {var1}) and correspond to the variables provided as additional inputs. The template defines the structure of the final prompt.",
-      "type": "string",
-      "example": "user says {var1}, can you respond in a {var2} fashion?"
-    },
-    {
-      "description": "The first variable to substitute into the template prompt. This should match the placeholder within the template string.",
-      "type": "string",
-      "example": "hello how are you"
-    },
-    {
-      "description": "The second variable for substitution into the template. It fills a designated placeholder within the template to further customize the prompt.",
-      "type": "string",
-      "example": "friendly"
-    },
-    {
-      "description": "An optional third variable that can be used for substitution. If the template includes a placeholder for this variable, it will be replaced accordingly. If not used, ensure the template does not include a placeholder for it.",
-      "type": "string",
-      "example": "adding additional context if needed"
-    }
-  ],
-  "outputs": [
-    {
-      "description": "The fully constructed prompt, with all placeholders within the template string replaced by the corresponding variables. This output is ready to be passed to chatbots for processing.",
-      "type": "string",
-      "example": "user says hello how are you, can you respond in a friendly fashion?"
-    }
-  ]
-}
+thinker_system_closing_instruction = r"""
 
 Please do a specific analysis for idea overview, API capabilities, integration challenges, technical feasibility, recommendations.
 Conclude with your overall judgment by giving a detailed workflow.
 You should be working hard to find out a way to make it work. If you feel a certain functionality is missing, ask yourself if you can decompose that task into several step, where the smaller steps can be implemented with the current toolkit. Be creative!
 The format of the output should always starting with “YES, the idea is feasible" , and then provide a detailed instruction ON the workflow, the working pipeline, on how to proceed with this idea by using the current available tech stack.
-
 """
 
 
@@ -203,150 +77,17 @@ thinker_few_shot_examples = [
     # }
 ]
 
-builder_system_instruction = r"""You are a model that works on pinning down the actual workflow from the implementation perspective. you translate the instruction into a workable flow, defining the components to use and how they are constructed. the current components that is available to use are:
-
-OpenAIAgent, HTTP_API_Get, HTTP_API_Post, PromptBuilder.
+builder_system_instruction = r"""You are a model that works on pinning down the actual workflow from the implementation perspective. you translate the instruction into a workable flow, defining the components to use and how they are constructed. 
 
 Now, I provide each available component with a schemas for your understanding of their capabilities. Do not infer anything more than is described, and do not invent things that violates or are not in the schema:
+the current components that is available to use are:
+"""
+
+
+builder_system_closing_instruction = r"""
+
 You only need to provide a very basic and simple skeleton. Trying to Use one tool to complete as much as possible, and only define the name and the downstream. DON’T USE ANY UNNECESSARY TOOLS or unnamed tools even if they are suggested in the input. Here's the information of the overall procedure, you need to use a rigorous json output to define this graph.
 
-**OpenAIAgent**
-{
-  "name": "OpenAIAgent@{id}",
-  "description": "A suite of tools leveraging OpenAI models for tasks ranging from text generation, language translation, to complex question answering. It's designed to interact with OpenAI's API, providing a flexible interface for implementing advanced language model functionalities.",
-  "inputs": [
-    {
-      "description": "A JSON object detailing the task type, parameters, and input text for processing. This specifies the intended use of the OpenAI model, such as generating text, translating languages, or answering questions.",
-      "type": "json",
-      "example": "{\"task\": \"text-generation\", \"prompt\": \"Write a short story about a robot.\", \"parameters\": {\"max_tokens\": 500}}"
-    }
-  ],
-  "outputs": [
-    {
-      "description": "The output from the OpenAI model based on the specified task and inputs. It includes the generated text, translation, or answer, along with any other relevant data provided by the model.",
-      "type": "json",
-      "example": "{\"generated_text\": \"Once upon a time, in a world not unlike our own...\"}"
-    }
-  ]
-}
-
-**HTTP_API_Get** 
-
-{
-"name": "HTTP_API_Get@{id}",
-"description": "A component designed to retrieve information from third-party websites by initiating HTTP GET requests. It enables sending requests to specified URLs and optionally includes headers for authentication or specifying request metadata. Tailored for scenarios requiring data extraction from external sources.",
-"inputs": [
-{
-"description": "The web address (endpoint) from which information is to be retrieved. This should be a fully qualified URL specifying the protocol (http or https), domain, and path to the resource. Use the defined constant below in defs if you need",
-
-"defs": [
-{
-"refName": "CourseloreGetPost",
-"description": "Endpoint for retrieving a specific post from Courselore using a post ID and an optional limit parameter. Useful for fetching detailed post information.",
-"value": "https://courselore.com/get?id=rorih4jfgee&limit=-1"
-},
-{
-"refName": "CourseloreGetUnreadPost",
-"description": "Endpoint to get the content of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
-"value": "https://courselore.com/get?id=rorih4jfgee"
-},
-{
-"refName": "MastodonSocialGetPost",
-"description": "Endpoint to retrieve recent public posts from the Mastodon social network with a limit on the number of posts. Ideal for integrating public social feeds.",
-"value": "https://mastodon.social/api/v1/timelines/public?limit=2"
-}
-]
-"type": "string",
-"example": "https://api.example.com/data"
-
-content: ""
-},
-{
-"description": "A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
-"type": "json",
-"example": "{\"Authorization\": \"Bearer YOUR_API_TOKEN\", \"Content-Type\": \"application/json\"}"
-
-content: ""
-},
-],
-"outputs": [
-{
-"description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from the requested URL, encompassing data, metadata, or any errors encountered during the request. It's crucial for implementing logic based on the response.",
-"type": "json",
-"example": "{\"data\": [{\"id\": 1, \"name\": \"Example\"}], \"meta\": {\"count\": 1}}"
-}
-]
-}
-
-**HTTP_API_Post** 
-{
-"name": "HTTP_API_Post@{id}",
-"description": "A component designed to initiate actions on third-party websites by sending HTTP POST requests. This tool sends data to specified URLs, using headers for authentication or specifying request metadata, and a body containing the data to be submitted. It's tailored for scenarios that involve creating, updating, or submitting data to external sources.",
-"inputs": [
-{
-"description": "The web address (endpoint) to which the data is to be sent. This should be a fully qualified URL specifying the protocol (http or https), domain, and the path to the resource where the POST request will be received.",
-"type": "string",
-"example": "https://api.example.com/resource/create"
-
-content: ""
-},
-{
-"description": "A JSON object containing the necessary request headers. These headers may include content type declarations, authentication tokens, or any other metadata required by the target API or service to process the request properly.",
-"type": "json",
-"example": "{\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer YOUR_API_TOKEN\"}",
-
-content: ""
-},
-{
-"description": "The actual data to be sent in the POST request. This JSON object should contain all the necessary information the API needs to create or update resources, or perform the intended action.",
-"type": "json",
-"example": "{\"name\": \"New Resource\", \"description\": \"Details about the resource.\"}",
-
-content: ""
-}
-],
-"outputs": [
-{
-"description": "The response data from the server after processing the POST request, typically in JSON format. This includes any data returned as a result of the action performed, such as a confirmation of creation, details of the updated resource, or error messages.",
-"type": "json",
-"example": "{\"success\": true, \"id\": 123, \"message\": \"Resource created successfully.\"}"
-}
-]
-}
-
-{
-"name": "PromptBuilder@{id}",
-"description": "A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots.",
-"inputs": [
-{
-"description": "A template string containing placeholders for variables. These placeholders are identified by braces (e.g., {var1}) and correspond to the variables provided as additional inputs. The template defines the structure of the final prompt.",
-"type": "string",
-"example": "user says {var1}, can you respond in a {var2} fashion?"
-},
-{
-"description": "The first variable to substitute into the template prompt. This should match the placeholder within the template string.",
-"type": "string",
-"example": "hello how are you"
-},
-{
-"description": "The second variable for substitution into the template. It fills a designated placeholder within the template to further customize the prompt.",
-"type": "string",
-"example": "friendly"
-},
-{
-"description": "An optional third variable that can be used for substitution. If the template includes a placeholder for this variable, it will be replaced accordingly. If not used, ensure the template does not include a placeholder for it.",
-"type": "string",
-"example": "adding additional context if needed"
-}
-],
-"outputs": [
-{
-"description": "The fully constructed prompt, with all placeholders within the template string replaced by the corresponding variables. This output is ready to be passed to chatbots for processing.",
-"type": "string",
-"example": "user says hello how are you, can you respond in a friendly fashion?"
-}
-]
-}
 
 Your input will be an evaluation on an idea, and the key functions that need to be fulfilled in your implementation.
 Your output should have two part, context and relationship, which will be then parsed by another model that actually builds the components' detail out. Your goal is to be informative and consistent so your output can be understand robustly by the model that complete the constructions of the components.
@@ -355,6 +96,7 @@ The relationship is a list of dependencies among components, each element in the
 the component_id is a string concatenation of the name of a component and a randomly generated 4 digit string of character and number (e.g. 3ht4), with a @ sign in middle. Each component_id specifically refer to a particular component in the flow.
 
 Think of each component as a function. focus on which function to call and how to chain the functions together.
+
 """
 
 builder_few_shot_examples = [
@@ -460,22 +202,22 @@ The relationships are as follows:
             },
             {
               "name": "PromptBuilder@9084",
-              "description": "[Here, building a user prompt for OpenAIAgent@8734.] A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots. The variables should always be three variables named var1, var2, and var3. You may assign meaning to those variables as you like. If you don't use all of them, leave them as empty string.",
+              "description": "[Here, building a user prompt for OpenAIAgent@8734.] A utility designed to dynamically construct prompts by inserting specified string variables into a template. This enables the generation of customized prompts based on user input or contextual data, ideal for crafting specific questions or instructions for chatbots. The variables should always be three variables named first_var, second_var, and third_var. You may assign meaning to those variables as you like. If you don't use all of them, leave them as empty string.",
               "inputs": [
                 {
                   "parameter": "template_prompt",
-                  "content": "Please read the following post from piazza: {var1}\n Now please summarize the content into a paragraph."
+                  "content": "Please read the following post from piazza: {first_var}\n Now please summarize the content into a paragraph."
                 },
                 {
-                  "parameter": "var1",
+                  "parameter": "first_var",
                   "content": "##HTTP_API_Get@2453"
                 },
                 {
-                    "name": "var2",
+                    "name": "second_var",
                     "content": ""
                 },
                 {
-                    "name": "var3",
+                    "name": "third_var",
                     "content": ""
                 }
               ],
@@ -585,18 +327,18 @@ The relationships are as follows:
         "inputs": [
             {
                 "parameter": "template_prompt",
-                "content": "Given the following posts and answers: {var1}, determine if the answer addresses the key points and questions raised sufficiently."
+                "content": "Given the following posts and answers: {first_var}, determine if the answer addresses the key points and questions raised sufficiently."
             },
             {
-                "parameter": "var1",
+                "parameter": "first_var",
                 "content": "##HTTP_API_Get@4334"
             },
             {
-                "parameter": "var2",
+                "parameter": "second_var",
                 "content": ""
             },
             {
-                "parameter": "var3",
+                "parameter": "third_var",
                 "content": ""
             }
         ],
@@ -633,18 +375,18 @@ The relationships are as follows:
         "inputs": [
             {
                 "parameter": "template_prompt",
-                "content": "Summarize the need for attention in the following post: {var1}, based on the judgment: {var2}."
+                "content": "Summarize the need for attention in the following post: {first_var}, based on the judgment: {second_var}."
             },
             {
-                "parameter": "var1",
+                "parameter": "first_var",
                 "content": "##HTTP_API_Get@4334"
             },
             {
-                "parameter": "var2",
+                "parameter": "second_var",
                 "content": "##OpenAIAgent@6836"
             },
             {
-                "parameter": "var3",
+                "parameter": "third_var",
                 "content": ""
             }
         ],

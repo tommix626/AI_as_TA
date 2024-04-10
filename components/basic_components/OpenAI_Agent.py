@@ -2,6 +2,45 @@ import openai
 from components.base_component import BaseComponent
 
 class OpenAIAgentComponent(BaseComponent):
+    thinker_description = r"""
+    {
+  "name": "OpenAIAgent",
+  "description": " A smart agent that is able follow instructions and finish simple task. Underneath, A suite of tools leveraging OpenAI models for tasks ranging from text generation, language translation, to complex question answering. It's designed to interact with OpenAI's API, providing a flexible interface for implementing advanced language model functionalities.",
+  "inputs": [
+    {
+      "description": "A JSON object detailing the task type, parameters, and input text for processing. This specifies the intended use of the OpenAI model, such as generating text, translating languages, or answering questions.",
+      "type": "json",
+      "example": "{\"task\": \"text-generation\", \"prompt\": \"Write a short story about a robot.\", \"parameters\": {\"max_tokens\": 500}}"
+    }
+  ],
+  "outputs": [
+    {
+      "description": "The output from the OpenAI model based on the specified task and inputs. It includes the generated text, translation, or answer, along with any other relevant data provided by the model.",
+      "type": "json",
+      "example": "{\"generated_text\": \"Once upon a time, in a world not unlike our own...\"}"
+    }
+  ]
+}
+"""
+    builder_description = r"""
+    {
+  "name": "OpenAIAgent@{id}",
+  "description": "A suite of tools leveraging OpenAI models for tasks ranging from text generation, language translation, to complex question answering. It's designed to interact with OpenAI's API, providing a flexible interface for implementing advanced language model functionalities.",
+  "inputs": [
+    {
+      "description": "A JSON object detailing the task type, parameters, and input text for processing. This specifies the intended use of the OpenAI model, such as generating text, translating languages, or answering questions.",
+      "type": "json",
+      "example": "{\"task\": \"text-generation\", \"prompt\": \"Write a short story about a robot.\", \"parameters\": {\"max_tokens\": 500}}"
+    }
+  ],
+  "outputs": [
+    {
+      "description": "The output from the OpenAI model based on the specified task and inputs. It includes the generated text, translation, or answer, along with any other relevant data provided by the model.",
+      "type": "json",
+      "example": "{\"generated_text\": \"Once upon a time, in a world not unlike our own...\"}"
+    }
+  ]
+}"""
     component_schema = r"""
     {
 "name": "OpenAIAgent",
@@ -37,6 +76,7 @@ class OpenAIAgentComponent(BaseComponent):
 ]
 }
     """
+
     def __init__(self, component_id, input_system_prompt=None, input_user_prompt=None, temperature=None, openai_api_key=None, **vars):
         super().__init__(component_id)
         self.api_key = openai_api_key
