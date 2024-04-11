@@ -1,5 +1,6 @@
 from components.basic_components.HTTP_API_Get import HTTPGetComponent
 from components.basic_components.HTTP_API_Post import HTTPPostComponent
+from components.basic_components.Knowledge_Query import KnowledgeQueryComponent
 from components.basic_components.OpenAI_Agent import OpenAIAgentComponent
 from components.basic_components.Prompt_Builder import PromptBuilderComponent
 from components.basic_components.test_components import TestComponentA, TestComponentB
@@ -11,6 +12,7 @@ component_map = {
     "HTTP_API_Post": HTTPPostComponent,
     "HTTP_API_Get": HTTPGetComponent,
     "PromptBuilder": PromptBuilderComponent,
+    "KnowledgeQuery": KnowledgeQueryComponent,
 
     # Include other mappings for tests
     "TestComponentA": TestComponentA,

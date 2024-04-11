@@ -67,7 +67,7 @@ By focusing on these streamlined steps, you'll be able to build a functional dem
 - Need thinker's description to be more conceptual, when the component number get larger, we don't want to bombard thinker with so many detailed code, but to focus on its ability to select the correct components to use. (on TEST 2)
 - Tom change the prompt so that no extra character like \n and spaces are eliminated from the few-shot result.
 - the post and get api endpoints need to have a specification of the result's format.
-
+- provide suggested connection to each component's output. also generate several plans by prompting "Now try to come up with another solution that is as different as possible.", and do a summary of all the plans, give it to the user to decide.
 # Documentation for adding component
 - to generate a new component, create a derived class from BaseComponent, and update the `component_map` in `components/define.py` to include the tool into the prompt cascade chain.
 

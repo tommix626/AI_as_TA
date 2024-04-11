@@ -1,136 +1,122 @@
+
 import json
+import openai
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores.chroma import Chroma
 
-import requests
 from components.base_component import BaseComponent
+import faiss
+import numpy as np
 
 
-def convert_header_str_to_dict(headers_str):
+class KnowledgeQueryComponent(BaseComponent):
+    builder_description = r"""
+    This component acts as a bridge between natural language queries and a corpus of knowledge. It takes in a textual query and a body of knowledge data, then utilizes OpenAI's embedding capabilities to understand and extract the most relevant pieces of information from the knowledge data. The component requires three key inputs:
+    1. 'query': A string representing the user's query.
+    2. 'knowledge_data': A lengthy string containing the text data to be searched. It's essential this data is well-structured and relevant to the query's context.
+    3. 'k': The number of top relevant results the component should return. This is crucial for tailoring the depth of information retrieval to the user's needs.
+    The output, 'retrieved_documents', is a detailed JSON string encapsulating the most relevant findings, making it easy to integrate and use in downstream components.
     """
-    Converts a string representation of a dictionary (headers) into a dictionary object.
-    Handles empty strings and invalid JSON formats gracefully, returning an empty dictionary in such cases.
 
-    Parameters:
-    - headers_str (str): The string representation of the headers dictionary.
-
-    Returns:
-    - dict: A dictionary object parsed from the input string. Returns an empty dictionary if input is invalid or empty.
+    thinker_description = r"""
+    The KnowledgeQueryComponent is designed for scenarios where understanding and extracting specific information from a larger body of text is necessary. It's particularly useful in workflows that involve dynamic data analysis, content summarization, or information retrieval tasks based on user queries. To integrate this component, ensure that the knowledge data is pre-processed and that the query is clearly defined. This component should be placed after any data preparation steps and before any components that require the extracted information for further processing (e.g. OpenAIAgent).
     """
-    if not headers_str.strip():
-        # If the input is an empty string or only contains whitespace, return an empty dictionary
-        return {}
 
-    try:
-        # Attempt to parse the string into a dictionary
-        headers_dict = json.loads(headers_str)
-        # Check if the result is indeed a dictionary
-        if isinstance(headers_dict, dict):
-            return headers_dict
-        else:
-            # If the parsed object is not a dictionary, log a warning/error and return an empty dictionary
-            print("Parsed object is not a dictionary.")
-            return {}
-    except json.JSONDecodeError:
-        # If there is a JSON decoding error, return an empty dictionary
-        print("Failed to parse headers string into dictionary.")
-        return {}
-
-
-class HTTPGetComponent(BaseComponent):
     component_schema = r"""
     {
-  "name": "HTTP_API_Get",
-  "description": "A component designed to retrieve information from third-party websites by initiating HTTP GET requests. It enables sending requests to specified URLs and optionally includes headers for authentication or specifying request metadata. Tailored for scenarios requiring data extraction from external sources.",
-  "inputs": [
-    {
-      "parameter": "url",
-      "description": "The web address (endpoint) from which information is to be retrieved. This should be a fully qualified URL specifying the protocol (http or https), domain, and path to the resource. Use the defined constant if you need",
-      "defs": [
-        {
-          "refName": "CourseloreGetPost",
-          "description": "Endpoint for retrieving a specific post from Courselore using a post ID and an optional limit parameter. Useful for fetching detailed post information.",
-          "value": "https://courselore.com/get?id=rorih4jfgee&limit=-1"
-        },
-        {
-          "refName": "CourseloreGetUnreadPost",
-          "description": "Endpoint to get the content of unread posts from Courselore for a specific ID. Useful for notification or update mechanisms.",
-          "value": "https://courselore.com/get?id=rorih4jfgee"
-        },
-        {
-          "refName": "MastodonSocialGetPost",
-          "description": "Endpoint to retrieve recent public posts from the Mastodon social network with a limit on the number of posts. Ideal for integrating public social feeds.",
-          "value": "https://mastodon.social/api/v1/timelines/public?limit=2"
-        }
-      ],
-      "type": "string",
-      "example": "https://api.example.com/data",
-      "content": ""
-    },
-    {
-      "parameter": "headers",
-      "description": "Optional, A JSON object containing request headers. These headers can include authentication tokens, content type specifications, or any other metadata required by the API or web service being accessed.",
-      "type": "json",
-      "example": "{\"Authorization\": \"Bearer YOUR_API_TOKEN\", \"Content-Type\": \"application/json\"}",
-      "content": ""
+        "name": "KnowledgeQuery",
+        "description": "Queries knowledge data using a natural language query to find the most relevant information.",
+        "inputs": [
+            {
+                "parameter": "query",
+                "description": "The query string used to search the knowledge data, expressed in natural language.",
+                "type": "string",
+                "example": "Explain the theory of relativity"
+            },
+            {
+                "parameter": "knowledge_data",
+                "description": "The string containing the corpus of knowledge data. This should include comprehensive information related to the query's context.",
+                "type": "string",
+                "example": "In physics, the theory of relativity, or simply relativity, encompasses two theories by Albert Einstein..."
+            },
+            {
+                "parameter": "k",
+                "description": "Specifies the number of top results to retrieve, as a string.",
+                "type": "string",
+                "example": "3"
+            }
+        ],
+        "outputs": [
+            {
+                "parameter": "retrieved_documents",
+                "description": "A JSON string containing the top k relevant pieces of information extracted from the knowledge data, including their relevance scores.",
+                "type": "string",
+                "example": "{\"documents\": [{\"id\": 1, \"text\": \"Einstein's theory of relativity is...\", \"score\": 0.98}, {\"id\": 2, \"text\": \"General relativity is a theory of gravitation...\"]}"
+            }
+        ]
     }
-  ],
-  "outputs": [
-    {
-      "parameter": "result",
-      "description": "The data returned from the HTTP GET request, typically in JSON format. This includes the response from the requested URL, encompassing data, metadata, or any errors encountered during the request. It's crucial for implementing logic based on the response.",
-      "type": "json",
-      "example": "{\"data\": [{\"id\": 1, \"name\": \"Example\"}], \"meta\": {\"count\": 1}}"
-    }
-  ]
-}
-
     """
-    def __init__(self, component_id, url=None, headers=None,**vars):
+
+
+
+
+    def __init__(self, component_id, query, knowledge_data, k, openai_api_key, **vars):
         super().__init__(component_id)
-        # URL and headers can be direct values or references to upstream components' outputs
-        self.url = url
-        self.headers = headers
+        self.query = query
+        self.knowledge_data = knowledge_data
+        self.k = k
+        self.openai_api_key = openai_api_key
 
     def prepare_inputs(self):
-        """Prepare the inputs for the HTTP GET request."""
         inputs = {}
 
-        # Resolving 'url'
-        if isinstance(self.url, str):
-            inputs['url'] = self.url
-        elif callable(self.url):
-            inputs['url'] = self.url()  # Assuming 'url' is set to a callback function
-        else:
-            self.logger.error("Invalid Url Meta Type. It should be either a string or a call-back get_output function")
-            raise TypeError
+        # query
+        inputs['query'] = self.query() if callable(self.query) else self.query
+        if not isinstance(inputs['query'], str):
+            raise TypeError("query should be a string.")
 
-        # Resolving 'headers'
-        #TODO add a decorator for the optional variables.
-        if isinstance(self.headers, str):
-            inputs['headers'] = convert_header_str_to_dict(self.headers)
-        elif callable(self.headers):
-            inputs['headers'] = self.headers()  # Assuming 'headers' is set to a callback function
-        else:
-            self.logger.error("Invalid headers Meta Type. It should be either a string or a call-back get_output function")
-            raise TypeError
+        # knowledge_data
+        inputs['knowledge_data'] = self.knowledge_data() if callable(self.knowledge_data) else self.knowledge_data
+        if not isinstance(inputs['knowledge_data'], str):
+            raise TypeError("knowledge_data should be a string.")
+
+        # Temperature
+        inputs['k'] = str(self.k() if callable(self.k) else self.k)
 
         return inputs
 
     def execute(self, inputs):
-        """Execute the HTTP GET request with prepared inputs."""
-        try:
-            response = requests.get(inputs['url'], headers=inputs.get('headers', {}))
-            self.output = response.json()
-            self.logger.info(f"HTTP GET request to {inputs['url']} executed successfully.")
-        except Exception as e:
-            self.logger.error(f"Failed to execute HTTP GET request: {e}")
-            self.output = None
+        openai.api_key = self.api_key
+        retriever = self._initialize_chroma_retriever()
 
-        self.is_output_fresh = True if self.output else False
-        self.output = str(self.output) #chaneg the output to str
+        # Embed the query
+        query_embedding = OpenAIEmbeddings(openai_api_key=self.openai_api_key).embed_text(self.query)
+
+        # Retrieve relevant documents based on the query embedding
+        retrieved_docs = retriever.retrieve(query_embedding, top_k=self.k)
+
+        # Assuming `retrieved_docs` is a list of dictionaries, each containing 'id', 'text', and 'score'
+        self.output = json.dumps({"documents": retrieved_docs})
+        self.is_output_fresh = True
 
     def get_output(self):
-        """Retrieve the component's output if it is fresh."""
         if not self.is_output_fresh:
-            self.logger.warning("Attempted to access stale output. Triggering run.")
             self.run()
         return self.output
+
+    def _initialize_chroma_retriever(self):
+        # Manually prepare the documents from the input string
+        docs = [{"id": 0, "text": self.knowledge_data}]
+
+        # Split documents into manageable chunks
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200) #TODO hard coded here, can be change to something dynamic/input.
+        splits = text_splitter.split_documents(docs)
+
+        # Use OpenAIEmbeddings to embed documents
+        embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key)
+
+        # Create a Chroma vector store from the embedded documents
+        vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+        retriever = vectorstore.as_retriever()
+        return retriever
