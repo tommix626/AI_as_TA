@@ -88,7 +88,7 @@ content: ""
       "content": ""
     },
     {
-      "parameter": "header",
+      "parameter": "headers",
       "description": "A JSON object containing the necessary request headers. These headers may include content type declarations, authentication tokens, or any other metadata required by the target API or service to process the request properly.",
       "type": "json",
       "example": "{\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer YOUR_API_TOKEN\"}",

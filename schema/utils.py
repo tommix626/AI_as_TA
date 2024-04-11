@@ -38,3 +38,10 @@ def validate_and_parse_cascade_output(cascade_output_string, validation_schema=l
     # Return None if either conversion, validation or parsing fails
     return None
 
+def save_schema_to_file(raw_constructor_output, file_path):
+    cascade_output = _convert_json_to_dict(raw_constructor_output)
+    with open(file_path, "w") as outfile:
+        json.dump(cascade_output, outfile)
+def load_schema_from_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return json.load(file)

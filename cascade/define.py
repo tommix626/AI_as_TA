@@ -187,7 +187,7 @@ The relationships are as follows:
                   "content": "https://courselore.com/get?id=rorih4jfgee"
                 },
                 {
-                  "parameter": "header",
+                  "parameter": "headers",
                   "content": ""
                 }
               ],
@@ -257,7 +257,7 @@ The relationships are as follows:
                   "content": "https://piazza.com/api/posts/create?id=rorih4jfgee"
                 },
                 {
-                  "parameter": "header",
+                  "parameter": "headers",
                   "content": "{\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer YOUR_API_TOKEN\"}"
                 },
                 {
@@ -308,7 +308,7 @@ The relationships are as follows:
                 "content": "https://courselore.com/get?timefilter=4"
             },
             {
-                "parameter": "header",
+                "parameter": "headers",
                 "content": ""
             }
         ],

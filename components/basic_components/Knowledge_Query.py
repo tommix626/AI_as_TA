@@ -1,4 +1,3 @@
-
 import json
 import openai
 from langchain.embeddings import OpenAIEmbeddings
@@ -58,9 +57,6 @@ class KnowledgeQueryComponent(BaseComponent):
     }
     """
 
-
-
-
     def __init__(self, component_id, query, knowledge_data, k, openai_api_key, **vars):
         super().__init__(component_id)
         self.query = query
@@ -87,14 +83,14 @@ class KnowledgeQueryComponent(BaseComponent):
         return inputs
 
     def execute(self, inputs):
-        openai.api_key = self.api_key
-        retriever = self._initialize_chroma_retriever()
+        openai.api_key = self.openai_api_key
+        retriever = self._initialize_chroma_retriever(inputs)
 
         # Embed the query
-        query_embedding = OpenAIEmbeddings(openai_api_key=self.openai_api_key).embed_text(self.query)
+        query_embedding = OpenAIEmbeddings(openai_api_key=self.openai_api_key).embed_text(inputs['query'])
 
         # Retrieve relevant documents based on the query embedding
-        retrieved_docs = retriever.retrieve(query_embedding, top_k=self.k)
+        retrieved_docs = retriever.retrieve(query_embedding, top_k=inputs['k'])
 
         # Assuming `retrieved_docs` is a list of dictionaries, each containing 'id', 'text', and 'score'
         self.output = json.dumps({"documents": retrieved_docs})
@@ -105,12 +101,13 @@ class KnowledgeQueryComponent(BaseComponent):
             self.run()
         return self.output
 
-    def _initialize_chroma_retriever(self):
+    def _initialize_chroma_retriever(self,inputs):
         # Manually prepare the documents from the input string
-        docs = [{"id": 0, "text": self.knowledge_data}]
+        docs = [{"id": 0, "text": inputs['knowledge_data']}]
 
         # Split documents into manageable chunks
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200) #TODO hard coded here, can be change to something dynamic/input.
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,
+                                                       chunk_overlap=200)  # TODO hard coded here, can be change to something dynamic/input.
         splits = text_splitter.split_documents(docs)
 
         # Use OpenAIEmbeddings to embed documents
