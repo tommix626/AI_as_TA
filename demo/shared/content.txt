@@ -1,0 +1,69 @@
+statuses API methods
+Publish, interact, and view information about statuses.
+
+Post a new status
+View a single status
+Delete a status
+Get parent and child statuses in context
+Translate a status
+See who boosted a status
+See who favourited a status
+Favourite a status
+Undo favourite of a status
+Boost a status
+Undo boost of a status
+Bookmark a status
+Undo bookmark of a status
+Mute a conversation
+Unmute a conversation
+Pin status to profile
+Unpin status from profile
+Edit a status
+View edit history of a status
+View status source
+(DEPRECATED) Fetch preview card
+See also
+Post a new status
+POST /api/v1/statuses HTTP/1.1
+Publish a status with the given parameters.
+
+Returns: Status. When scheduled_at is present, ScheduledStatus is returned instead.
+OAuth: User + write:statuses
+Version history:
+0.0.0 - added
+2.7.0 - scheduled_at added
+2.8.0 - poll added
+
+Request
+Headers
+Authorization
+REQUIRED Provide this header with Bearer <user token> to gain authorized access to this API method.
+Idempotency-Key
+Provide this header with any arbitrary string to prevent duplicate submissions of the same status. Consider using a hash or UUID generated client-side. Idempotency keys are stored for up to 1 hour.
+Form data parameters
+status
+REQUIRED String. The text content of the status. If media_ids is provided, this becomes optional. Attaching a poll is optional while status is provided.
+media_ids[]
+REQUIRED Array of String. Include Attachment IDs to be attached as media. If provided, status becomes optional, and poll cannot be used.
+poll[options][]
+REQUIRED Array of String. Possible answers to the poll. If provided, media_ids cannot be used, and poll[expires_in] must be provided.
+poll[expires_in]
+REQUIRED Integer. Duration that the poll should be open, in seconds. If provided, media_ids cannot be used, and poll[options] must be provided.
+poll[multiple]
+Boolean. Allow multiple choices? Defaults to false.
+poll[hide_totals]
+Boolean. Hide vote counts until the poll ends? Defaults to false.
+in_reply_to_id
+String. ID of the status being replied to, if status is a reply.
+sensitive
+Boolean. Mark status and attached media as sensitive? Defaults to false.
+spoiler_text
+String. Text to be shown as a warning or subject before the actual content. Statuses are generally collapsed behind this field.
+visibility
+String. Sets the visibility of the posted status to public, unlisted, private, direct.
+language
+String. ISO 639 language code for this status.
+scheduled_at
+String. ISO 8601 Datetime at which to schedule a status. Providing this parameter will cause ScheduledStatus to be returned instead of Status. Must be at least 5 minutes in the future.
+Response
+200: OK

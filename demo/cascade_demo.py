@@ -10,7 +10,8 @@ builder = BuilderModel("gpt-3.5-turbo")
 constructor = ConstructorModel("gpt-3.5-turbo")
 
 # Define the initial input for the Thinker model
-initial_thinker_input = "Instructor: Do a summary for the newest 5 posts from Mastodon and send me a summary of those post with the role of a morning news reporter. I will listen to your summarization while eating breakfast"
+# initial_thinker_input = "Instructor: Do a summary for the newest 5 posts from Mastodon and send me a summary of those post with the role of a morning news reporter. I will listen to your summarization while eating breakfast"
+initial_thinker_input = "Instructor: load the material in the file I saved at ./shared/content.txt. I will listen to its summarization while eating breakfast"
 config = "you don't need an output component leave the final result in the final component is enough"
 initial_thinker_input += config
 

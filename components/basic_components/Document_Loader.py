@@ -43,7 +43,7 @@ class DocumentLoaderComponent(BaseComponent):
         # Ensure the resource path is a string
         if not isinstance(self.resource_path, str):
             raise TypeError("resource_path should be a string.")
-
+        return inputs
 
     def execute(self, inputs):
         # Determine the file type and choose the appropriate loader
@@ -51,8 +51,10 @@ class DocumentLoaderComponent(BaseComponent):
             self.output = self._load_pdf_content(inputs['resource_path'])
         elif inputs['resource_path'].endswith('.docx'):
             self.output = self._load_docx_content(inputs['resource_path'])
+        elif inputs['resource_path'].endswith('.txt'):
+            self.output = self._load_txt_content(inputs['resource_path'])
         else:
-            raise ValueError("Unsupported file type. Only PDF and DOCX are supported.")
+            raise ValueError("Unsupported file type. Only PDF, DOCX, and TXT are supported.")
         self.is_output_fresh = True
 
     def get_output(self):
@@ -74,3 +76,10 @@ class DocumentLoaderComponent(BaseComponent):
         content = [paragraph.text for paragraph in doc.paragraphs]
         return '\n'.join(content)
 
+    def _load_txt_content(self, path):
+        try:
+            with open(path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            return content
+        except Exception as e:
+            raise IOError(f"Error reading TXT file at {path}: {e}")

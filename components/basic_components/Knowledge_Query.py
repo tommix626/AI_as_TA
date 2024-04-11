@@ -13,13 +13,13 @@ class KnowledgeQueryComponent(BaseComponent):
     builder_description = r"""
     This component acts as a bridge between natural language queries and a corpus of knowledge. It takes in a textual query and a body of knowledge data, then utilizes OpenAI's embedding capabilities to understand and extract the most relevant pieces of information from the knowledge data. The component requires three key inputs:
     1. 'query': A string representing the user's query.
-    2. 'knowledge_data': A lengthy string containing the text data to be searched. It's essential this data is well-structured and relevant to the query's context.
+    2. 'knowledge_data': A lengthy string containing the text data to be searched. This data should be a large collection that contains some useful information sparsely.
     3. 'k': The number of top relevant results the component should return. This is crucial for tailoring the depth of information retrieval to the user's needs.
     The output, 'retrieved_documents', is a detailed JSON string encapsulating the most relevant findings, making it easy to integrate and use in downstream components.
     """
 
     thinker_description = r"""
-    The KnowledgeQueryComponent is designed for scenarios where understanding and extracting specific information from a larger body of text is necessary. It's particularly useful in workflows that involve dynamic data analysis, content summarization, or information retrieval tasks based on user queries. To integrate this component, ensure that the knowledge data is pre-processed and that the query is clearly defined. This component should be placed after any data preparation steps and before any components that require the extracted information for further processing (e.g. OpenAIAgent).
+    The KnowledgeQueryComponent is designed for scenarios where understanding and extracting specific information from a larger body of text is necessary. It's particularly useful in workflows that involve dynamic data analysis, content summarization, or information retrieval tasks based on user queries. To integrate this component, ensure that the knowledge data is connected to a large volume data and that the query shows some keywords. This component should be placed after any data source (e.g. DocumentLoader) and before any components that require the extracted information for further processing (e.g. OpenAIAgent).
     """
 
     component_schema = r"""
@@ -84,16 +84,24 @@ class KnowledgeQueryComponent(BaseComponent):
 
     def execute(self, inputs):
         openai.api_key = self.openai_api_key
-        retriever = self._initialize_chroma_retriever(inputs)
+        Chroma_vs = self._initialize_chroma_vectorstore(inputs)
 
-        # Embed the query
-        query_embedding = OpenAIEmbeddings(openai_api_key=self.openai_api_key).embed_text(inputs['query'])
+        # # Embed the query
+        # response = openai.Embedding.create(
+        #     input=inputs['query'],
+        #     model="text-embedding-ada-002"
+        # )
+        #
+        # query_embedding = response['data'][0]['embedding']
 
         # Retrieve relevant documents based on the query embedding
-        retrieved_docs = retriever.retrieve(query_embedding, top_k=inputs['k'])
+        retrieved_docs = Chroma_vs.similarity_search(inputs['query'], top_k=inputs['k'])
+        retrived_content = ""
+        for doc in retrieved_docs:
+            retrived_content += doc.page_content
 
         # Assuming `retrieved_docs` is a list of dictionaries, each containing 'id', 'text', and 'score'
-        self.output = json.dumps({"documents": retrieved_docs})
+        self.output = json.dumps({"documents": retrived_content })
         self.is_output_fresh = True
 
     def get_output(self):
@@ -101,19 +109,21 @@ class KnowledgeQueryComponent(BaseComponent):
             self.run()
         return self.output
 
-    def _initialize_chroma_retriever(self,inputs):
+    def _initialize_chroma_vectorstore(self,inputs):
         # Manually prepare the documents from the input string
         docs = [{"id": 0, "text": inputs['knowledge_data']}]
 
         # Split documents into manageable chunks
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,
                                                        chunk_overlap=200)  # TODO hard coded here, can be change to something dynamic/input.
-        splits = text_splitter.split_documents(docs)
+        # splits = text_splitter.split_documents(docs)
+        splits = text_splitter.split_text(inputs['knowledge_data'])
 
         # Use OpenAIEmbeddings to embed documents
         embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key)
 
         # Create a Chroma vector store from the embedded documents
-        vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-        retriever = vectorstore.as_retriever()
-        return retriever
+        # vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+        vectorstore = Chroma.from_texts(texts=splits, embedding=embeddings)
+        # retriever = vectorstore.as_retriever()
+        return vectorstore

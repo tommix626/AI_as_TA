@@ -1,3 +1,4 @@
+from components.basic_components.Document_Loader import DocumentLoaderComponent
 from components.basic_components.HTTP_API_Get import HTTPGetComponent
 from components.basic_components.HTTP_API_Post import HTTPPostComponent
 from components.basic_components.Knowledge_Query import KnowledgeQueryComponent
@@ -13,6 +14,7 @@ component_map = {
     "HTTP_API_Get": HTTPGetComponent,
     "PromptBuilder": PromptBuilderComponent,
     "KnowledgeQuery": KnowledgeQueryComponent,
+    "DocumentLoader": DocumentLoaderComponent,
 
     # Include other mappings for tests
     "TestComponentA": TestComponentA,
