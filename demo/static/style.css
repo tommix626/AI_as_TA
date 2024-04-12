@@ -1,0 +1,72 @@
+/* Add this CSS to your static/style.css file */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #e5e5e5;
+}
+
+#chat-container {
+    padding: 20px;
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+}
+
+.chat-bubble {
+    background-color: #f0f0f0;
+    border-radius: 16px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    max-width: 80%;
+}
+
+/* Styles for the different types of chat messages */
+.thinker {
+    background-color: #add8e6;
+}
+
+.builder {
+    background-color: #add8e6;
+}
+
+.constructor {
+    background-color: #add8e6;
+}
+
+/* Style for the input form at the bottom */
+#input-form {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
+}
+
+#input-form input {
+    flex: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+#input-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#input-form button:hover {
+    background-color: #0056b3;
+}
+
+.user {
+    background-color: #dcf8c6; /* Light green, typically used for the user's messages */
+    margin-left: auto; /* Aligns the bubble to the right */
+}

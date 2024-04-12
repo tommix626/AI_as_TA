@@ -1,4 +1,4 @@
-import fitz  # PyMuPDF
+# import fitz  # PyMuPDF
 import docx
 from components.base_component import BaseComponent
 import json
@@ -48,7 +48,7 @@ class DocumentLoaderComponent(BaseComponent):
     def execute(self, inputs):
         # Determine the file type and choose the appropriate loader
         if inputs['resource_path'].endswith('.pdf'):
-            self.output = self._load_pdf_content(inputs['resource_path'])
+            self.output = self._load_docx_content(inputs['resource_path']) #should be pdf
         elif inputs['resource_path'].endswith('.docx'):
             self.output = self._load_docx_content(inputs['resource_path'])
         elif inputs['resource_path'].endswith('.txt'):
@@ -62,13 +62,13 @@ class DocumentLoaderComponent(BaseComponent):
             self.run()
         return self.output
 
-    def _load_pdf_content(self, path):
-        # Load and extract text from a PDF file
-        content = []
-        with fitz.open(path) as doc:
-            for page in doc:
-                content.append(page.get_text())
-        return '\n'.join(content)
+    # def _load_pdf_content(self, path):
+    #     # Load and extract text from a PDF file
+    #     content = []
+    #     with fitz.open(path) as doc:
+    #         for page in doc:
+    #             content.append(page.get_text())
+    #     return '\n'.join(content)
 
     def _load_docx_content(self, path):
         # Load and extract text from a DOCX file

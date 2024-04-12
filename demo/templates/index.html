@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cascade Processing Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="chat-container"></div>
+
+    <form id="input-form">
+        <input type="text" id="inputText" name="inputText" placeholder="Type your question..." autocomplete="off">
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        document.getElementById('input-form').onsubmit = function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            let inputText = document.getElementById('inputText').value;
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputText: inputText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Append chat bubbles with the outputs to the chat container
+                let container = document.getElementById('chat-container');
+
+                // Append user input as a chat bubble
+                container.innerHTML += '<div class="chat-bubble user">' + inputText + '</div>';
+
+                // Append each model's output as a chat bubble
+                container.innerHTML += '<div class="chat-bubble thinker">' + data.thinker_output + '</div>';
+                container.innerHTML += '<div class="chat-bubble builder">' + data.builder_output + '</div>';
+                container.innerHTML += '<div class="chat-bubble constructor">' + data.constructor_output + '</div>';
+
+                // Clear the input field after sending
+                document.getElementById('inputText').value = '';
+
+                // Scroll to the bottom of the chat container
+                container.scrollTop = container.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    </script>
+</body>
+</html>

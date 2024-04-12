@@ -5,7 +5,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.chroma import Chroma
 
 from components.base_component import BaseComponent
-import faiss
+# import faiss
 import numpy as np
 
 
