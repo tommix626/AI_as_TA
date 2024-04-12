@@ -4,7 +4,6 @@ import json
 from cascade.builder_model import BuilderModel
 from cascade.constructor_model import ConstructorModel
 from cascade.thinker_model import ThinkerModel
-# from schema.utils import validate_and_parse_cascade_output
 
 from components.component_factory.component_factory import ComponentFactory
 from components.component_factory.component_registry import ComponentRegistry
@@ -43,28 +42,29 @@ def process_input():
         thinker_output_text = json.dumps(thinker_output, indent=4)
         builder_output_text = json.dumps(builder_output, indent=4)
         constructor_output_text = json.dumps(validate_and_parse_cascade_output(constructor_output), indent=4)
-
         input_schemas = constructor_output
 
         print("Parsing schemas...")
         parsed_input_schemas = validate_and_parse_cascade_output(input_schemas)
 
         print("Setting up factory....")
-        registry = ComponentRegistry()
-        factory = ComponentFactory(registry)
-        factory.setup(parsed_input_schemas)
+        try:
+            registry = ComponentRegistry()
+            factory = ComponentFactory(registry)
+            factory.setup(parsed_input_schemas)
 
-        print("Running factory....")
-        result = factory.run()
-        print("Result = \n" + result)
+            print("Running factory....")
+            result = factory.run()
+            print("Result = \n" + result)
+        except:
+            result = "Those are the workflows. Thank you for using it."
 
-
-    return jsonify({
+    return {
         'thinker_output': thinker_output_text,
         'builder_output': builder_output_text,
         'constructor_output': constructor_output_text,
         'final_result': result
-    })
+    }
 
 if __name__ == '__main__':
     app.run(debug=True)

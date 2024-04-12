@@ -18,13 +18,14 @@ body {
     max-width: 80%;
 }
 
-/* Styles for the different types of chat messages */
 .thinker {
     background-color: #add8e6;
+    white-space: pre-wrap;
 }
 
 .builder {
     background-color: #add8e6;
+    white-space: pre-wrap;
 }
 
 .constructor {
