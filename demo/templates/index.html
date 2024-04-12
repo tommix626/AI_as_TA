@@ -15,7 +15,7 @@
 
     <script>
         document.getElementById('input-form').onsubmit = function(event) {
-            event.preventDefault(); // Prevent the form from submitting normally
+            event.preventDefault();
             let inputText = document.getElementById('inputText').value;
             fetch('/process', {
                 method: 'POST',
@@ -26,21 +26,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Append chat bubbles with the outputs to the chat container
                 let container = document.getElementById('chat-container');
-
-                // Append user input as a chat bubble
                 container.innerHTML += '<div class="chat-bubble user">' + inputText + '</div>';
-
-                // Append each model's output as a chat bubble
                 container.innerHTML += '<div class="chat-bubble thinker">' + data.thinker_output + '</div>';
                 container.innerHTML += '<div class="chat-bubble builder">' + data.builder_output + '</div>';
                 container.innerHTML += '<div class="chat-bubble constructor">' + data.constructor_output + '</div>';
-
-                // Clear the input field after sending
+                container.innerHTML += '<div class="chat-bubble final">' + data.final_result + '</div>';
                 document.getElementById('inputText').value = '';
-
-                // Scroll to the bottom of the chat container
                 container.scrollTop = container.scrollHeight;
             })
             .catch(error => {
