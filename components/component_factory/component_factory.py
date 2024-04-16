@@ -1,3 +1,4 @@
+import json
 import logging
 
 from collections import defaultdict, deque
@@ -49,6 +50,10 @@ def _parse_and_sort_dependencies(components: list[dict[str, str]]) -> list[str]:
         raise ValueError("Not all components are connected in the dependency graph.")
 
     return sorted_ids
+
+
+def api_endpoint_identifier(args):
+    pass
 
 
 class ComponentFactory:
@@ -127,6 +132,7 @@ class ComponentFactory:
                 logging.error(f"Component creation error, component_id={component_id}.")
                 return False
 
+
         # last one should be the entry point of the flow.
         self.entry_component = self.registry.get(sorted_components_id[-1])
         return True
@@ -136,3 +142,36 @@ class ComponentFactory:
 
     def perish(self):
         self.entry_component.perish()
+
+    @api_endpoint_identifier
+    def get_modifiable_params(self):
+        """
+        Gathers and returns all modifiable parameters from each component registered in the factory's registry.
+
+        Returns:
+            str: A JSON-formatted string containing all components' modifiable parameters.
+                 Each component's modifiable parameters are indexed by their component_id.
+        """
+        all_params = {}
+        for component_id, component in self.registry.components.items():
+            all_params[component_id] = component.modifiable_params
+
+        # Convert the dictionary to a JSON-formatted string to standardize the output format
+        return json.dumps(all_params)
+
+    @api_endpoint_identifier
+    def update_modifiable_params(self, updates):
+        """
+        Updates modifiable parameters across multiple components based on provided updates.
+
+        Args:
+            updates (dict): A dictionary where keys are component IDs and values are dictionaries
+                            of parameter names and their new values.
+        """
+        for component_id, params in updates.items():
+            component = self.registry.get(component_id)
+            if component:
+                component.update_modifiable_params(params)
+            else:
+                logging.warning(f"No component found with ID {component_id} for update.")
+
