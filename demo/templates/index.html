@@ -17,14 +17,13 @@
                 <textarea id="modifiedBuilderText" name="modifiedBuilderText" rows="10">
                     {{ builder }}
                 </textarea>
-                <label>Constructor Prompt</label>
-                <textarea id="modifiedConstructorText" name="modifiedConstructorText" rows="10">
-                    {{ constructor }}
-                </textarea>
                 <button type="submit">Modify</button>
             </form>
         </div>
         <div id="chat-container">
+            <div id="chat-content">
+                <!-- Chat bubbles go here -->
+            </div>
             <form id="input-form">
                 <input type="text" id="inputText" name="inputText" placeholder="Type your question..." autocomplete="off">
                 <button type="submit" id="sendButton">Send</button>
@@ -66,7 +65,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                let container = document.getElementById('chat-container');
+                let container = document.getElementById('chat-content');
                 container.innerHTML += '<div class="chat-bubble user">' + inputText + '</div>';
                 container.innerHTML += '<div class="chat-bubble thinker">' + data.thinker_output + '</div>';
                 container.innerHTML += '<pre class="chat-bubble builder">' + data.builder_output + '</pre>';
@@ -89,7 +88,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                let container = document.getElementById('chat-container');
+                let container = document.getElementById('chat-content');
                 container.innerHTML += '<div class="chat-bubble user">' + "regenerate" + '</div>';
                 container.innerHTML += '<div class="chat-bubble final">' + data.final_result + '</div>';
                 document.getElementById('inputText').value = '';

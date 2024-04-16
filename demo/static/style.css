@@ -1,199 +1,144 @@
-body {
+/* General Reset */
+* {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #e5e5e5;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#chat-container {
-    padding: 20px;
-    height: calc(100vh - 70px);
-    overflow-y: auto;
-    width: 70%;
+body {
+    background-color: #f0f2f5;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
 }
-
 
 .app-container {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
+    flex-direction: row; /* Aligns children horizontally */
+    flex-wrap: wrap; /* Allows items to wrap onto the next line on smaller screens */
+    gap: 100px; /* Increases space between the containers */
+    justify-content: space-between; /* Spaces out the child elements */
+    max-width: 1200px;
+    height: 100vh;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-height: calc(100vh - 40px); /* New property: min-height of the viewport height minus the top and bottom margins */
 }
 
-#input-modification-container {
-    flex-basis: 30%;
-    border-right: 2px solid black;
-    overflow: auto;
-}
-
-#modification-form {
+#input-modification-container{
     display: flex;
-    flex-direction: column;
+    overflow-y: auto; /* Make sure the chat is scrollable */
+    flex-direction: column; /* Stacks child elements vertically */
+    justify-content: space-between; /* Aligns the chat input to the bottom */
+    flex: 1;
+    min-width: 300px; /* Minimum width for each container */
+    height: 600px; /* Sets a fixed height to ensure internal elements align properly */
 }
-
-#modifiedInputText {
-    flex-grow: 1;
-    margin: 0;
-    padding: 10px;
-    outline: none;
-    resize: none;
-    box-sizing: border-box;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-#modifiedBuilderText {
-    flex-grow: 1;
-    margin: 0;
-    padding: 10px;
-    outline: none;
-    resize: none;
-    box-sizing: border-box;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-#modifiedConstructorText {
-    flex-grow: 1;
-    margin: 0;
-    padding: 10px;
-    outline: none;
-    resize: none;
-    box-sizing: border-box;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-
-#modification-form button {
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid black;
-    background-color: #f5f5f5;
-    cursor: pointer;
-}
-
-#regen button {
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid black;
-    background-color: #f5f5f5;
-    cursor: pointer;
+#chat-container {
+    display: flex;
+    height: 100vh;
+    margin-top: auto; /* Push it to the bottom */
+    overflow-y: auto; /* Make sure the chat is scrollable */
+    flex-direction: column; /* Stacks child elements vertically */
+    justify-content: space-between; /* Aligns the chat input to the bottom */
+    flex: 1;
+    min-width: 300px; /* Minimum width for each container */
 }
 
 #chat-container {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+    position: relative;
 }
 
-#chat-container #input-form {
-    margin-top: auto;
-    width: calc(100% - 20px);
-    position: fixed;
-    bottom: 0;
+#chat-container .chat-content {
+    flex-grow: 1; /* Allows this div to expand and push the form to the bottom */
+    overflow-y: auto; /* Enables scrolling for overflow content */
+    padding: 10px; /* Gives some space inside the chat content area */
 }
 
-textarea, input[type="text"] {
+
+#input-form {
+    position: absolute;
+    bottom: 0; /* Positions the form at the bottom of the chat-container */
     width: 100%;
-    box-sizing: border-box;
+}
+/* Form and Input Styling */
+form {
+    margin-bottom: 20px;
 }
 
-#input-form input {
-    flex: 1;
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
     padding: 10px;
-    margin-right: 10px;
+    margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    outline: none;
 }
 
-#input-form #sendButton {
-    padding: 10px 20px;
+button {
+    display: inline-block;
     background-color: #007bff;
-    color: white;
+    color: #fff;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: 5px;
+    transition: background-color 0.3s ease;
 }
 
-#input-form #regenButton {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-#input-form button:hover {
+button:hover {
     background-color: #0056b3;
 }
 
-
-
-
+/* Chat Bubble Styling */
 .chat-bubble {
-    background-color: #f0f0f0;
-    border-radius: 16px;
     padding: 10px 20px;
-    margin: 10px 0;
-    max-width: 80%;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    width: fit-content;
+    max-width: 70%;
 }
-
-.thinker {
-    background-color: #add8e6;
-    white-space: pre-line;
-}
-
-.builder {
-    background-color: #add8e6;
-    white-space: pre-line;
-}
-
-.constructor {
-    background-color: #add8e6;
-}
-
-.final {
-    background-color: #add8e6;
-}
-
-
-
-#inputText {
-    flex-grow: 1;
-    margin-right: 10px;
-}
-
-#sendButton, #regenButton {
-    margin-left: 5px;
-}
-
-#input-form input {
-    flex: 1;
-    padding: 10px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-}
-
-#input-form button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#input-form button:hover {
-    background-color: #0056b3;
-}
-
 
 .user {
     background-color: #dcf8c6;
-    margin-left: auto;
+    align-self: flex-end;
+}
+
+.thinker, .builder, .constructor, .final {
+    background-color: #f0f0f0;
+}
+
+/* Adjustment for different roles */
+.builder, .constructor {
+    font-family: monospace;
+}
+
+/* Utility Classes */
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .app-container {
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }

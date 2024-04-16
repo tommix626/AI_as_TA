@@ -43,6 +43,7 @@ def modify_prompt():
     user_construct = data.get('user_construct', '')
     with open('prompts/user_constructor.txt', 'w') as file:
         file.write(user_construct)
+    # Return a response to the client (optional)
     return jsonify(success=True, message='Prompt modified successfully.')
 
 @app.route('/regenerate', methods=['POST'])
@@ -107,22 +108,29 @@ def process_input():
         parsed_input_schemas = validate_and_parse_cascade_output(input_schemas)
 
         print("Setting up factory....")
+        try:
+            with open('prompts/factory_input.txt', 'w') as file:
+                file.write(parsed_input_schemas)
+            registry = ComponentRegistry()
+            factory = ComponentFactory(registry)
+            factory.setup(parsed_input_schemas)
 
-        # with open('prompts/factory_input.txt', 'w') as file:
-        #     file.write(parsed_input_schemas)
-        registry = ComponentRegistry()
-        factory = ComponentFactory(registry)
-        factory.setup(parsed_input_schemas)
-
-        print("Running factory....")
-        result = factory.run()
-        print("Result = \n" + result)
+            print("Running factory....")
+            result = factory.run()
+            print("Result = \n" + result)
+        except:
+            result = "Those are the workflows. Sorry we don't have specific output for now. Thank you for using it."
 
     return {
         'thinker_output': thinker_output,
         'builder_output': builder_output,
         'constructor_output': constructor_output_text,
         'final_result': result
+
+        # 'thinker_output': thinker_output,
+        # 'builder_output': "dummy",
+        # 'constructor_output': "dummy",
+        # 'final_result': "dummy"
     }
 
 if __name__ == '__main__':
