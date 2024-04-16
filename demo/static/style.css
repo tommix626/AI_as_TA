@@ -42,7 +42,6 @@ body {
     display: flex;
     height: 100vh;
     margin-top: auto; /* Push it to the bottom */
-    overflow-y: auto; /* Make sure the chat is scrollable */
     flex-direction: column; /* Stacks child elements vertically */
     justify-content: space-between; /* Aligns the chat input to the bottom */
     flex: 1;
