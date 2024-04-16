@@ -26,7 +26,7 @@ class ThinkerModel(CascadeModel):
                 continue
             comp_prompt += f"**{component_name}**\n{component_cls.thinker_description}\n\n"
             name_prompt += component_name + ", "
-        prompt += name_prompt + ".\n" + comp_prompt + add
+        prompt += name_prompt + ".\n" + comp_prompt + thinker_system_closing_instruction
 
         # TODO: add a structured thinker description from the class static variable instead of harding coding it.
         # for component_name, component_cls in self.component_map.items():

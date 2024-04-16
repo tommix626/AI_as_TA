@@ -70,9 +70,9 @@
             .then(data => {
                 let container = document.getElementById('chat-container');
                 container.innerHTML += '<div class="chat-bubble user">' + inputText + '</div>';
-                // container.innerHTML += '<div class="chat-bubble thinker">' + data.thinker_output + '</div>';
-                // container.innerHTML += '<pre class="chat-bubble builder">' + data.builder_output + '</pre>';
-                // container.innerHTML += '<pre class="chat-bubble constructor">' + data.constructor_output + '</pre>';
+                container.innerHTML += '<div class="chat-bubble thinker">' + data.thinker_output + '</div>';
+                container.innerHTML += '<pre class="chat-bubble builder">' + data.builder_output + '</pre>';
+                container.innerHTML += '<pre class="chat-bubble constructor">' + data.constructor_output + '</pre>';
                 container.innerHTML += '<div class="chat-bubble final">' + data.final_result + '</div>';
                 document.getElementById('inputText').value = '';
                 container.scrollTop = container.scrollHeight;

@@ -26,7 +26,7 @@ class BuilderModel(CascadeModel):
                 continue
             comp_prompt += f"**{component_name}**\n{component_cls.thinker_description}\n\n"
             name_prompt += component_name + ", "
-        prompt += name_prompt + ".\n" + comp_prompt + add
+        prompt += name_prompt + ".\n" + comp_prompt + builder_system_closing_instruction
 
         messages.append({"role": "system", "content": prompt})
         # Add few-shot examples to the message history

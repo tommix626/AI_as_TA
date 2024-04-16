@@ -17,7 +17,7 @@ class ConstructorModel(CascadeModel):
         add = self.instructions
         if(user_prompting != ""):
             add = user_prompting
-        prompt = add + "\n\n"
+        prompt = self.instructions + "\n\n"
         for component_name, component_cls in self.component_map.items():
             prompt += f"**{component_name}**\n{component_cls.component_schema}\n\n"
         # prompt += "\n".join(self.few_shot_examples) + "\n\n"
