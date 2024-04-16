@@ -95,7 +95,7 @@ class ComponentFactory:
                     # Setup callback or direct assignment as needed
                     callback = lambda: upstream_component.get_output()
                     setattr(component, param_name, callback)
-                    component.upstream_dependency.append(upstream_component)
+                    component.add_dependency(upstream_component)
                 else:
                     logging.warning(
                         f"Upstream component ID= {upstream_id} not found when setting up param: {param_name}.")
@@ -127,9 +127,12 @@ class ComponentFactory:
                 logging.error(f"Component creation error, component_id={component_id}.")
                 return False
 
-        # last one should be the entry point of the flow. FIXME
+        # last one should be the entry point of the flow.
         self.entry_component = self.registry.get(sorted_components_id[-1])
         return True
 
     def run(self):
         return self.entry_component.get_output()
+
+    def perish(self):
+        self.entry_component.perish()

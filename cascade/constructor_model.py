@@ -12,10 +12,10 @@ class ConstructorModel(CascadeModel):
         self.instructions = constructor_system_instruction
         self.few_shot_examples = constructor_few_shot_examples
 
-    def prepare_prompt(self, goal, builder_output, user_prompting, builder_output_context=None,builder_output_relationships=None): #TODO parse the output
+    def prepare_prompt(self, goal, builder_output, user_prompting=None, builder_output_context=None,builder_output_relationships=None): #TODO parse the output
         messages = []
         add = self.instructions
-        if(user_prompting != ""):
+        if(user_prompting != None and user_prompting != ""):
             add = user_prompting
         prompt = self.instructions + "\n\n"
         for component_name, component_cls in self.component_map.items():
@@ -37,7 +37,7 @@ class ConstructorModel(CascadeModel):
 
         return messages
 
-    def execute(self, goal, builder_output, user_prompting):
+    def execute(self, goal, builder_output, user_prompting=None):
         prompt = self.prepare_prompt(goal, builder_output, user_prompting)
         output_text = self.call_model(prompt)
         return output_text

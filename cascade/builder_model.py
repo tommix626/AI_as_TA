@@ -13,10 +13,10 @@ class BuilderModel(CascadeModel):
         self.instructions = builder_system_instruction
         self.few_shot_examples = builder_few_shot_examples
 
-    def prepare_prompt(self, goal, thinker_output, user_prompting):
+    def prepare_prompt(self, goal, thinker_output, user_prompting=None):
         messages = []
         add = builder_system_closing_instruction
-        if(user_prompting != ""):
+        if(user_prompting != None and user_prompting != ""):
             add = user_prompting
 
         prompt = self.instructions + "\n\n"
@@ -36,7 +36,7 @@ class BuilderModel(CascadeModel):
 
         return messages
 
-    def execute(self, goal, thinker_output, user_prompting):
+    def execute(self, goal, thinker_output, user_prompting=None):
         """
         Processes the output from the thinker model and prepares it for the constructor model.
 

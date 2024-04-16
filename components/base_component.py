@@ -52,3 +52,8 @@ class BaseComponent:
             self.run()
             # self.logger.warning("Attempted to access stale output.")
         return self.output
+
+    def perish(self):
+        for upstream_component in self.upstream_dependency:
+            upstream_component.perish()
+        self.is_output_fresh = False
