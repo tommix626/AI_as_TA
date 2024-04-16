@@ -68,6 +68,9 @@ By focusing on these streamlined steps, you'll be able to build a functional dem
 - Tom change the prompt so that no extra character like \n and spaces are eliminated from the few-shot result.
 - the post and get api endpoints need to have a specification of the result's format.
 - provide suggested connection to each component's output. also generate several plans by prompting "Now try to come up with another solution that is as different as possible.", and do a summary of all the plans, give it to the user to decide.
+- refining the cascade by adding a check on the builder, checking that all the components name are valid before going to the constructor phase.
+
+
 # Documentation for adding component
 - to generate a new component, create a derived class from BaseComponent, and update the `component_map` in `components/define.py` to include the tool into the prompt cascade chain.
 

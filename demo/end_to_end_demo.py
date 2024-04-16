@@ -47,3 +47,12 @@ factory.setup(parsed_input_schemas)
 print("Running factory....")
 result = factory.run()
 print("Result = \n" + result)
+
+
+result = factory.run()
+print("rerunning Result = \n" + result)
+
+print("perished")
+factory.perish()
+result = factory.run()
+print("Result = \n" + result)

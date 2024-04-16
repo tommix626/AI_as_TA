@@ -12,9 +12,9 @@ class ThinkerModel(CascadeModel):
         self.instructions = thinker_system_instruction
         self.few_shot_examples = thinker_few_shot_examples
 
-    def prepare_prompt(self, user_input, user_prompting):
+    def prepare_prompt(self, user_input, user_prompting=None):
         add = thinker_system_closing_instruction
-        if(user_prompting != ""):
+        if(user_prompting != None and user_prompting != ""):
             add = user_prompting
 
         messages = []
@@ -40,7 +40,7 @@ class ThinkerModel(CascadeModel):
 
         return messages
 
-    def execute(self, user_input, user_prompting):
+    def execute(self, user_input, user_prompting=None):
         prompt = self.prepare_prompt(user_input, user_prompting)
         output_text = self.call_model(prompt)
         return output_text
