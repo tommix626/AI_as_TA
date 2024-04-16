@@ -12,10 +12,12 @@ class ConstructorModel(CascadeModel):
         self.instructions = constructor_system_instruction
         self.few_shot_examples = constructor_few_shot_examples
 
-    def prepare_prompt(self, goal, builder_output, builder_output_context=None,builder_output_relationships=None): #TODO parse the output
+    def prepare_prompt(self, goal, builder_output, user_prompting, builder_output_context=None,builder_output_relationships=None): #TODO parse the output
         messages = []
-
-        prompt = self.instructions + "\n\n"
+        add = self.instructions
+        if(user_prompting != ""):
+            add = user_prompting
+        prompt = add + "\n\n"
         for component_name, component_cls in self.component_map.items():
             prompt += f"**{component_name}**\n{component_cls.component_schema}\n\n"
         # prompt += "\n".join(self.few_shot_examples) + "\n\n"
@@ -35,13 +37,13 @@ class ConstructorModel(CascadeModel):
 
         return messages
 
-    def execute(self, goal, builder_output):
-        prompt = self.prepare_prompt(goal, builder_output)
+    def execute(self, goal, builder_output, user_prompting):
+        prompt = self.prepare_prompt(goal, builder_output, user_prompting)
         output_text = self.call_model(prompt)
         return output_text
 
 
 if __name__ == '__main__':
     c = ConstructorModel("tt")
-    d = c.prepare_prompt("%This is builder output context%","%This is builder output_relationship%")
+    d = c.prepare_prompt("%This is builder output context%","%This is builder output_relationship%", "")
     print(d)

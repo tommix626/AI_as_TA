@@ -1,0 +1,4 @@
+Please do a specific analysis for idea overview, API capabilities, integration challenges, technical feasibility, recommendations.
+Conclude with your overall judgment by giving a detailed workflow.
+You should be working hard to find out a way to make it work. If you feel a certain functionality is missing, ask yourself if you can decompose that task into several step, where the smaller steps can be implemented with the current toolkit. Be creative!
+The format of the output should always starting with "YES, the idea is feasible" , and then provide a detailed instruction ON the workflow, the working pipeline, on how to proceed with this idea by using the current available tech stack.

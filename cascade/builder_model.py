@@ -13,8 +13,11 @@ class BuilderModel(CascadeModel):
         self.instructions = builder_system_instruction
         self.few_shot_examples = builder_few_shot_examples
 
-    def prepare_prompt(self, goal, thinker_output):
+    def prepare_prompt(self, goal, thinker_output, user_prompting):
         messages = []
+        add = builder_system_closing_instruction
+        if(user_prompting != ""):
+            add = user_prompting
 
         prompt = self.instructions + "\n\n"
         comp_prompt, name_prompt = "", ""
@@ -23,7 +26,7 @@ class BuilderModel(CascadeModel):
                 continue
             comp_prompt += f"**{component_name}**\n{component_cls.thinker_description}\n\n"
             name_prompt += component_name + ", "
-        prompt += name_prompt + ".\n" + comp_prompt + builder_system_closing_instruction
+        prompt += name_prompt + ".\n" + comp_prompt + add
 
         messages.append({"role": "system", "content": prompt})
         # Add few-shot examples to the message history
@@ -33,7 +36,7 @@ class BuilderModel(CascadeModel):
 
         return messages
 
-    def execute(self, goal, thinker_output):
+    def execute(self, goal, thinker_output, user_prompting):
         """
         Processes the output from the thinker model and prepares it for the constructor model.
 
@@ -43,12 +46,12 @@ class BuilderModel(CascadeModel):
         Returns:
         - output_text (str): The processed output ready for the constructor model.
         """
-        prompt = self.prepare_prompt(goal,thinker_output)
+        prompt = self.prepare_prompt(goal,thinker_output, user_prompting)
         output_text = self.call_model(prompt)
         return output_text
 
 if __name__ == '__main__':
     c = BuilderModel("builder")
     thinker_output = "%This is the output from the thinker model%"
-    d = c.prepare_prompt("Goal",thinker_output)
+    d = c.prepare_prompt("Goal",thinker_output, "")
     print(d)

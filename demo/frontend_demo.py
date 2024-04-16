@@ -17,8 +17,59 @@ constructor = ConstructorModel("gpt-3.5-turbo")
 
 @app.route('/')
 def index():
-    # Just render the template on GET request.
-    return render_template('index.html')
+    with open('prompts/user_thinker.txt', 'w') as file:
+        pass
+    with open('prompts/user_builder.txt', 'w') as file:
+        pass
+    with open('prompts/user_constructor.txt', 'w') as file:
+        pass
+    with open('prompts/thinker.txt', 'r') as file:
+        thinker = file.read()
+    with open('prompts/builder.txt', 'r') as file:
+        builder = file.read()
+    with open('prompts/constructor.txt', 'r') as file:
+        constructor = file.read()
+    return render_template('index.html', thinker = thinker, builder = builder, constructor = constructor)
+
+@app.route('/modify_prompt', methods=['POST'])
+def modify_prompt():
+    data = request.get_json()
+    user_think = data.get('user_think', '')
+    with open('prompts/user_thinker.txt', 'w') as file:
+        file.write(user_think)
+    user_build = data.get('user_build', '')
+    with open('prompts/user_builder.txt', 'w') as file:
+        file.write(user_build)
+    user_construct = data.get('user_construct', '')
+    with open('prompts/user_constructor.txt', 'w') as file:
+        file.write(user_construct)
+    # Return a response to the client (optional)
+    return jsonify(success=True, message='Prompt modified successfully.')
+
+@app.route('/regenerate', methods=['POST'])
+def regenerate():
+    print("regenerating")
+    with open('prompts/factory_input.txt', 'r') as file:
+        factory_input = file.read()
+    result = ""
+    if(factory_input == ""):
+        result = "Sorry there is no factory input yet."
+    else:
+        try:
+            registry = ComponentRegistry()
+            factory = ComponentFactory(registry)
+            factory.setup(factory_input)
+
+            print("Running factory....")
+            result = factory.run()
+            print("Result = \n" + result)
+        except:
+            result = "Those are the workflows. Sorry we don't have specific output for now. Thank you for using it."
+
+    return {
+        'final_result': result
+    }
+
 
 @app.route('/process', methods=['POST'])
 def process_input():
@@ -32,11 +83,20 @@ def process_input():
         input_text += config
         print("running!")
 
-        thinker_output = thinker.execute(input_text)
+        with open('prompts/thinker.txt', 'r') as file:
+            thinker_prompt = file.read()
+        with open('prompts/builder.txt', 'r') as file:
+            builder_prompt = file.read()
+        with open('prompts/constructor.txt', 'r') as file:
+            constructor_prompt = file.read()
+
+        print(thinker_prompt == "")
+        thinker_output = thinker.execute(input_text, thinker_prompt)
+
         print(thinker_output)
-        builder_output = builder.execute(goal=input_text, thinker_output=thinker_output)
+        builder_output = builder.execute(goal=input_text, thinker_output=thinker_output, user_prompting = builder_prompt)
         print(builder_output)
-        constructor_output = constructor.execute(goal=input_text+thinker_output, builder_output=builder_output)
+        constructor_output = constructor.execute(goal=input_text+thinker_output, builder_output=builder_output, user_prompting = constructor_prompt)
         print(constructor_output)
 
         thinker_output_text = json.dumps(thinker_output, indent=4)
@@ -49,6 +109,8 @@ def process_input():
 
         print("Setting up factory....")
         try:
+            with open('prompts/factory_input.txt', 'w') as file:
+                file.write(parsed_input_schemas)
             registry = ComponentRegistry()
             factory = ComponentFactory(registry)
             factory.setup(parsed_input_schemas)
@@ -57,13 +119,18 @@ def process_input():
             result = factory.run()
             print("Result = \n" + result)
         except:
-            result = "Those are the workflows. Thank you for using it."
+            result = "Those are the workflows. Sorry we don't have specific output for now. Thank you for using it."
 
     return {
-        'thinker_output': thinker_output_text,
-        'builder_output': builder_output_text,
-        'constructor_output': constructor_output_text,
+        # 'thinker_output': thinker_output,
+        # 'builder_output': builder_output,
+        # 'constructor_output': constructor_output_text,
         'final_result': result
+
+        # 'thinker_output': thinker_output,
+        # 'builder_output': "dummy",
+        # 'constructor_output': "dummy",
+        # 'final_result': "dummy"
     }
 
 if __name__ == '__main__':

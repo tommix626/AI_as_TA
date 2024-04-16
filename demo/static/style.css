@@ -8,7 +8,106 @@ body {
     padding: 20px;
     height: calc(100vh - 70px);
     overflow-y: auto;
+    width: 70%;
 }
+
+
+.app-container {
+    display: flex;
+    justify-content: space-between; /* Aligns children to the start of the container */
+    gap: 20px; /* Adds some space between the containers */
+}
+
+#input-modification-container {
+    flex-basis: 30%; /* Takes up 30% of the container's width */
+    border-right: 2px solid black;
+    overflow: auto;
+}
+
+#modification-form {
+    display: flex; /* Uses flexbox to organize children */
+    flex-direction: column; /* Stacks children vertically */
+}
+
+#modifiedInputText {
+    flex-grow: 1; /* Allows the textarea to fill the space above the button */
+    margin: 0; /* Removes any default margin */
+    padding: 10px; /* Adds some padding inside the textarea for text */
+    outline: none; /* Removes the outline to give a flat look */
+    resize: none; /* Disables the ability to resize the textarea */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#modifiedBuilderText {
+    flex-grow: 1; /* Allows the textarea to fill the space above the button */
+    margin: 0; /* Removes any default margin */
+    padding: 10px; /* Adds some padding inside the textarea for text */
+    outline: none; /* Removes the outline to give a flat look */
+    resize: none; /* Disables the ability to resize the textarea */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#modifiedConstructorText {
+    flex-grow: 1; /* Allows the textarea to fill the space above the button */
+    margin: 0; /* Removes any default margin */
+    padding: 10px; /* Adds some padding inside the textarea for text */
+    outline: none; /* Removes the outline to give a flat look */
+    resize: none; /* Disables the ability to resize the textarea */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+/* Style for the modify button in the form */
+#modification-form button {
+    margin-top: 10px; /* Adds margin on the top for spacing */
+    padding: 10px; /* Adds padding for better clickability */
+    border: 1px solid black; /* Adds border for definition */
+    background-color: #f5f5f5; /* Light grey background */
+    cursor: pointer; /* Changes cursor to indicate button */
+}
+
+#regen button {
+    margin-top: 10px; /* Adds margin on the top for spacing */
+    padding: 10px; /* Adds padding for better clickability */
+    border: 1px solid black; /* Adds border for definition */
+    background-color: #f5f5f5; /* Light grey background */
+    cursor: pointer; /* Changes cursor to indicate button */
+}
+
+#chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column; /* Organizes children of the chat container vertically */
+}
+
+#chat-container #input-form {
+    margin-top: auto; /* Pushes the form to the bottom of the chat container */
+    width: calc(100% - 20px); /* Adjusts width to account for any padding or borders */
+    position: fixed;
+    bottom: 0;
+}
+
+#chat-container #regen {
+    margin-top: auto; /* Pushes the form to the bottom of the chat container */
+    left: 570px;
+    width: calc(100% - 20px); /* Adjusts width to account for any padding or borders */
+    position: fixed;
+    bottom: 0;
+}
+
+textarea, input[type="text"] {
+    width: 100%; /* Ensures these elements take the full width */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+}
+
+
+
 
 .chat-bubble {
     background-color: #f0f0f0;
@@ -20,12 +119,12 @@ body {
 
 .thinker {
     background-color: #add8e6;
-    white-space: pre-wrap;
+    white-space: pre-line;
 }
 
 .builder {
     background-color: #add8e6;
-    white-space: pre-wrap;
+    white-space: pre-line;
 }
 
 .constructor {
@@ -36,16 +135,16 @@ body {
     background-color: #add8e6;
 }
 
-#input-form {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    padding: 10px;
-    background-color: white;
-    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
-}
+/*#input-form {*/
+/*    position: fixed;*/
+/*    bottom: 0;*/
+/*    left: 0;*/
+/*    right: 0;*/
+/*    display: flex;*/
+/*    padding: 10px;*/
+/*    background-color: white;*/
+/*    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);*/
+/*}*/
 
 #input-form input {
     flex: 1;
@@ -66,6 +165,19 @@ body {
 }
 
 #input-form button:hover {
+    background-color: #0056b3;
+}
+
+#regen button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#regen button:hover {
     background-color: #0056b3;
 }
 

@@ -12,7 +12,11 @@ class ThinkerModel(CascadeModel):
         self.instructions = thinker_system_instruction
         self.few_shot_examples = thinker_few_shot_examples
 
-    def prepare_prompt(self, user_input):
+    def prepare_prompt(self, user_input, user_prompting):
+        add = thinker_system_closing_instruction
+        if(user_prompting != ""):
+            add = user_prompting
+
         messages = []
 
         prompt = self.instructions + "\n\n"
@@ -22,7 +26,7 @@ class ThinkerModel(CascadeModel):
                 continue
             comp_prompt += f"**{component_name}**\n{component_cls.thinker_description}\n\n"
             name_prompt += component_name + ", "
-        prompt += name_prompt + ".\n" + comp_prompt + thinker_system_closing_instruction
+        prompt += name_prompt + ".\n" + comp_prompt + add
 
         # TODO: add a structured thinker description from the class static variable instead of harding coding it.
         # for component_name, component_cls in self.component_map.items():
@@ -36,12 +40,12 @@ class ThinkerModel(CascadeModel):
 
         return messages
 
-    def execute(self, user_input):
-        prompt = self.prepare_prompt(user_input)
+    def execute(self, user_input, user_prompting):
+        prompt = self.prepare_prompt(user_input, user_prompting)
         output_text = self.call_model(prompt)
         return output_text
 
 if __name__ == '__main__':
     c = ThinkerModel("thinker")
-    d = c.prepare_prompt("%This is user_input%")
+    d = c.prepare_prompt("%This is user_input%", "")
     print(d)

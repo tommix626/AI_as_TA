@@ -6,14 +6,56 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div id="chat-container"></div>
-
-    <form id="input-form">
-        <input type="text" id="inputText" name="inputText" placeholder="Type your question..." autocomplete="off">
-        <button type="submit">Send</button>
-    </form>
+    <div class="app-container">
+        <div id="input-modification-container">
+            <form id="modification-form">
+                <label>Thinker Prompt</label>
+                <textarea id="modifiedInputText" name="modifiedInputText" rows="10">
+                    {{ thinker }}
+                </textarea>
+                <label>Builder Prompt</label>
+                <textarea id="modifiedBuilderText" name="modifiedBuilderText" rows="10">
+                    {{ builder }}
+                </textarea>
+                <label>Constructor Prompt</label>
+                <textarea id="modifiedConstructorText" name="modifiedConstructorText" rows="10">
+                    {{ constructor }}
+                </textarea>
+                <button type="submit">Modify</button>
+            </form>
+        </div>
+        <div id="chat-container">
+            <form id="input-form">
+                <input type="text" id="inputText" name="inputText" placeholder="Type your question..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+            <form id="regen">
+                <button type="submit">Regenerate</button>
+            </form>
+        </div>
+    </div>
 
     <script>
+        document.getElementById('modification-form').onsubmit = function(event) {
+            event.preventDefault();
+            let think = document.getElementById('modifiedInputText').value;
+            let build = document.getElementById('modifiedBuilderText').value;
+            let construct = document.getElementById('modifiedConstructorText').value;
+            fetch('/modify_prompt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_think: think, user_build: build, user_construct: construct })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Prompt modified:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
         document.getElementById('input-form').onsubmit = function(event) {
             event.preventDefault();
             let inputText = document.getElementById('inputText').value;
@@ -28,9 +70,29 @@
             .then(data => {
                 let container = document.getElementById('chat-container');
                 container.innerHTML += '<div class="chat-bubble user">' + inputText + '</div>';
-                container.innerHTML += '<pre class="chat-bubble thinker">' + data.thinker_output + '</pre>';
-                container.innerHTML += '<pre class="chat-bubble builder">' + data.builder_output + '</pre>';
-                container.innerHTML += '<pre class="chat-bubble constructor">' + data.constructor_output + '</pre>';
+                // container.innerHTML += '<div class="chat-bubble thinker">' + data.thinker_output + '</div>';
+                // container.innerHTML += '<pre class="chat-bubble builder">' + data.builder_output + '</pre>';
+                // container.innerHTML += '<pre class="chat-bubble constructor">' + data.constructor_output + '</pre>';
+                container.innerHTML += '<div class="chat-bubble final">' + data.final_result + '</div>';
+                document.getElementById('inputText').value = '';
+                container.scrollTop = container.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+        document.getElementById('regen').onsubmit = function(event) {
+            event.preventDefault();
+            fetch('/regenerate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                let container = document.getElementById('chat-container');
+                container.innerHTML += '<div class="chat-bubble user">' + "regenerate" + '</div>';
                 container.innerHTML += '<div class="chat-bubble final">' + data.final_result + '</div>';
                 document.getElementById('inputText').value = '';
                 container.scrollTop = container.scrollHeight;

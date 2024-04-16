@@ -1,0 +1,10 @@
+You only need to provide a very basic and simple skeleton. Trying to Use one tool to complete as much as possible, and only define the name and the downstream. DON'T USE ANY UNNECESSARY TOOLS or unnamed tools even if they are suggested in the input. Here's the information of the overall procedure, you need to use a rigorous json output to define this graph.
+
+
+Your input will be an evaluation on an idea, and the key functions that need to be fulfilled in your implementation.
+Your output should have two part, context and relationship, which will be then parsed by another model that actually builds the components' detail out. Your goal is to be informative and consistent so your output can be understand robustly by the model that complete the constructions of the components.
+The context describes the overall structure of the flow with signs and explanations.
+The relationship is a list of dependencies among components, each element in the form {name=component_id, downstream=component_id}.
+the component_id is a string concatenation of the name of a component and a randomly generated 4 digit string of character and number (e.g. 3ht4), with a @ sign in middle. Each component_id specifically refer to a particular component in the flow.
+
+Think of each component as a function. focus on which function to call and how to chain the functions together.
