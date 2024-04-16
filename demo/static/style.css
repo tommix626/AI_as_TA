@@ -34,8 +34,8 @@ body {
     overflow-y: auto; /* Make sure the chat is scrollable */
     flex-direction: column; /* Stacks child elements vertically */
     justify-content: space-between; /* Aligns the chat input to the bottom */
-    flex: 1;
-    min-width: 300px; /* Minimum width for each container */
+    width: 30%;
+    /*min-width: 300px; !* Minimum width for each container *!*/
     height: 600px; /* Sets a fixed height to ensure internal elements align properly */
 }
 #chat-container {
@@ -52,10 +52,12 @@ body {
     position: relative;
 }
 
-#chat-container .chat-content {
+#chat-content {
     flex-grow: 1; /* Allows this div to expand and push the form to the bottom */
     overflow-y: auto; /* Enables scrolling for overflow content */
     padding: 10px; /* Gives some space inside the chat content area */
+    max-height: calc(100vh - 170px);
+    margin-bottom: 20px;
 }
 
 
