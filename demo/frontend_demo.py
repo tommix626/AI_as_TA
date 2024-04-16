@@ -43,7 +43,6 @@ def modify_prompt():
     user_construct = data.get('user_construct', '')
     with open('prompts/user_constructor.txt', 'w') as file:
         file.write(user_construct)
-    # Return a response to the client (optional)
     return jsonify(success=True, message='Prompt modified successfully.')
 
 @app.route('/regenerate', methods=['POST'])
@@ -124,11 +123,6 @@ def process_input():
         'builder_output': builder_output,
         'constructor_output': constructor_output_text,
         'final_result': result
-
-        # 'thinker_output': thinker_output,
-        # 'builder_output': "dummy",
-        # 'constructor_output': "dummy",
-        # 'final_result': "dummy"
     }
 
 if __name__ == '__main__':

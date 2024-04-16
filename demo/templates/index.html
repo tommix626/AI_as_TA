@@ -27,10 +27,8 @@
         <div id="chat-container">
             <form id="input-form">
                 <input type="text" id="inputText" name="inputText" placeholder="Type your question..." autocomplete="off">
-                <button type="submit">Send</button>
-            </form>
-            <form id="regen">
-                <button type="submit">Regenerate</button>
+                <button type="submit" id="sendButton">Send</button>
+                <button type="button" id="regenButton">Regenerate</button>
             </form>
         </div>
     </div>
@@ -81,7 +79,7 @@
                 console.error('Error:', error);
             });
         };
-        document.getElementById('regen').onsubmit = function(event) {
+        document.getElementById('regenButton').addEventListener('click', function(event) {
             event.preventDefault();
             fetch('/regenerate', {
                 method: 'POST',
@@ -100,7 +98,7 @@
             .catch(error => {
                 console.error('Error:', error);
             });
-        };
+        });
     </script>
 </body>
 </html>
