@@ -36,3 +36,6 @@ def _convert_json_to_dict(json_string: str):
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON: {e.msg}")
         return None
+    except TypeError as e:
+        print("wrong")
+        return None

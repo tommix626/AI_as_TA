@@ -49,14 +49,14 @@ class ConstructorModel(CascadeModel):
         # Performing safeguarding
         if max_retry_times > 0:
             logger = logging.getLogger(f"{self.__class__.__name__}")
-            logger.warning("Safe Guarding Constructor")
+            logger.info("Safe Guarding Constructor")
             # print("Safe Guarding Constructor")
             for i in range(max_retry_times):
                 if self.safe_guard(output_text):
-                    break
-                logger.warning(f"DEBUG:: Constructor Output Invalid: {output_text}, Retrying {i}/10...")
+                    return output_text
+                logger.warning(f"DEBUG:: Constructor Output Invalid, Retrying {i+1}/{max_retry_times}...")
                 output_text = self.call_model(prompt)  # Attempt to get a valid output again
-
+            return None
         return output_text
 
     def safe_guard(self, output):
@@ -64,8 +64,7 @@ class ConstructorModel(CascadeModel):
         Safeguarding the output of the constructor model, ensure that it is valid JSON and contains valid components.
         """
         try:
-            output_json = json.loads(output)
-            if not validate_and_parse_cascade_output(output_json):
+            if not validate_and_parse_cascade_output(output):
                 return False
             return True
         except json.JSONDecodeError:

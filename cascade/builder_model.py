@@ -60,14 +60,14 @@ class BuilderModel(CascadeModel):
         #performing safeguarding
         if max_retry_times > 0:
             logger = logging.getLogger(f"{self.__class__.__name__}")
-            logger.warning("Safe Guarding Builder")
+            logger.info("Safe Guarding Builder Model")
             # print("Safe Guarding Builder")
             for i in range(max_retry_times):
                 if self.safe_guard(output_text):
-                    break
-                logger.warning(f"DEBUG:: Builder Output Invalid:{output_text}, Retrying {i}/10...")
+                    return output_text
+                logger.warning(f"DEBUG:: Builder Output Invalid, Retrying {i+1}/{max_retry_times}...")
                 output_text = self.call_model(prompt) #TODO: alternative, keep this conversation with a follow up prompt, refering back to the map. or add a ending to the prompt to ensure different answer.
-
+            return None
         return output_text
 
     def safe_guard(self, output):
@@ -77,7 +77,7 @@ class BuilderModel(CascadeModel):
         :return: boolean, true or false for validity
         """
         components: list[str] = self.extract_downstream_components(output)
-        logging.warning(f"DEBUG:: Safe Guarding:: Extracted components {components}")
+        logging.info(f"DEBUG:: Safe Guarding:: Extracted components {components}")
         if len(components) == 0:
             return False
         return all(component in self.component_map for component in components)
@@ -95,7 +95,7 @@ class BuilderModel(CascadeModel):
                     if "downstream" in relation:
                         components.add(relation["downstream"].split('@')[0])
             return list(components)
-        except json.JSONDecodeError:
+        except Exception:
             lines = input_string.split('\n')
             for line in lines:
                 try: # partial json
@@ -103,7 +103,7 @@ class BuilderModel(CascadeModel):
                     if isinstance(data, dict) and "name" in data and "downstream" in data:
                         components.add(data["name"].split('@')[0])
                         components.add(data["downstream"].split('@')[0])
-                except json.JSONDecodeError:
+                except Exception:
                     #regex
                     name_pattern = r"name=([^;{}\n]+)"
                     downstream_pattern = r"downstream=([^;{}\n]+)"
