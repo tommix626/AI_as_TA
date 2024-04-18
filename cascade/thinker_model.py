@@ -1,6 +1,6 @@
 import json
 
-from cascade.cascade_model import CascadeModel
+from cascade.base_cascade_model import CascadeModel
 from cascade.define import thinker_system_instruction, thinker_few_shot_examples, thinker_system_closing_instruction
 from components.define import component_map
 
@@ -40,12 +40,12 @@ class ThinkerModel(CascadeModel):
 
         return messages
 
-    def execute(self, user_input, user_prompting=None):
-        prompt = self.prepare_prompt(user_input, user_prompting)
+    def execute(self, user_input, **kwargs):
+        prompt = self.prepare_prompt(user_input)
         output_text = self.call_model(prompt)
         return output_text
 
 if __name__ == '__main__':
     c = ThinkerModel("thinker")
-    d = c.prepare_prompt("%This is user_input%", "")
+    d = c.prepare_prompt("%This is user_input%")
     print(d)

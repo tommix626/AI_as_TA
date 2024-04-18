@@ -30,6 +30,7 @@ class CascadeModel:
         self.api_key = openai_api_key
         self.instructions = None
         self.session = None  # Placeholder for a session object if needed
+        self.model_temperature = 0.7
 
     def call_model(self, messages):
         """
@@ -44,16 +45,18 @@ class CascadeModel:
         openai.api_key = self.api_key
         response = openai.ChatCompletion.create(
             model=self.model_name,
-            messages=messages
+            messages=messages,
+            temperature=self.model_temperature
         )
 
         last_message = response['choices'][0]['message']['content'] if response['choices'][0]['message'] else ""
         return last_message
 
-    def execute(self, additional_info):
+    def execute(self, goal, **kwargs):
         """
         The main execution method that should prepare the prompt, calls the model, and
         processes the output.
+        :param **kwargs: some additional flags for each specific model
         """
         raise NotImplementedError("This method should be implemented by subclasses.")
 
