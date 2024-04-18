@@ -9,14 +9,6 @@
     <div class="app-container">
         <div id="input-modification-container">
             <form id="modification-form">
-                <label>Thinker Prompt</label>
-                <textarea id="modifiedInputText" name="modifiedInputText" rows="10">
-                    {{ thinker }}
-                </textarea>
-                <label>Builder Prompt</label>
-                <textarea id="modifiedBuilderText" name="modifiedBuilderText" rows="10">
-                    {{ builder }}
-                </textarea>
                 <button type="submit">Modify</button>
             </form>
         </div>
@@ -35,15 +27,18 @@
     <script>
         document.getElementById('modification-form').onsubmit = function(event) {
             event.preventDefault();
-            let think = document.getElementById('modifiedInputText').value;
-            let build = document.getElementById('modifiedBuilderText').value;
-            let construct = document.getElementById('modifiedConstructorText').value;
+            let formData = {};
+
+            data.prompt_list.forEach(promptId => {
+                const promptData = document.getElementById(promptId).value;
+                formData[promptId] = promptData;
+            });
             fetch('/modify_prompt', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user_think: think, user_build: build, user_construct: construct })
+                body: JSON.stringify({ formData})//todo
             })
             .then(response => response.json())
             .then(data => {
@@ -53,6 +48,22 @@
                 console.error('Error:', error);
             });
         };
+        window.addEventListener('load', () => {
+            const form = document.getElementById('modification-form');
+            data.prompt_list.forEach(promptId => {
+                const label = document.createElement('label');
+                label.setAttribute('for', promptId);
+                label.textContent = promptId;
+
+                const textarea = document.createElement('textarea');
+                textarea.id = promptId;
+                textarea.name = promptId;
+                textarea.rows = 10;
+
+                form.appendChild(label);
+                form.appendChild(textarea);
+            });
+        });
         document.getElementById('input-form').onsubmit = function(event) {
             event.preventDefault();
             let inputText = document.getElementById('inputText').value;
@@ -73,6 +84,24 @@
                 container.innerHTML += '<div class="chat-bubble final">' + data.final_result + '</div>';
                 document.getElementById('inputText').value = '';
                 container.scrollTop = container.scrollHeight;
+
+                const dataleft = {
+                    prompt_list: data.prompt_list
+                };
+                const form = document.getElementById('modification-form');
+
+                dataleft.prompt_list.forEach(function(promptId) {
+                    const label = document.createElement('label');
+                    label.htmlFor = promptId;
+                    label.textContent = promptId;
+                    form.appendChild(label);
+
+                    const textarea = document.createElement('textarea');
+                    textarea.id = promptId;
+                    textarea.name = promptId;
+                    textarea.rows = '10';
+                    form.appendChild(textarea);
+                });
             })
             .catch(error => {
                 console.error('Error:', error);

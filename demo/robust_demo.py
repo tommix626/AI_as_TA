@@ -54,5 +54,6 @@ print("rerunning Result = \n" + result)
 
 print("perished")
 factory.perish()
+print(factory.get_modifiable_params)
 result = factory.run()
 print("Result = \n" + result)

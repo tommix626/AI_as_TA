@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import json
+import re
 
 from cascade.builder_model import BuilderModel
 from cascade.constructor_model import ConstructorModel
@@ -91,18 +92,25 @@ def process_input():
             constructor_prompt = file.read()
 
         print(thinker_prompt == "")
-        thinker_output = thinker.execute(input_text, thinker_prompt)
+        thinker_output = thinker.execute(input_text)
 
-        print(thinker_output)
-        builder_output = builder.execute(goal=input_text, thinker_output=thinker_output, user_prompting = builder_prompt)
+        # print(thinker_output)
+        builder_output = builder.execute(goal=input_text, thinker_output=thinker_output)
         print(builder_output)
-        constructor_output = constructor.execute(goal=input_text+thinker_output, builder_output=builder_output, user_prompting = constructor_prompt)
-        print(constructor_output)
+        constructor_output = constructor.execute(goal=input_text+thinker_output, builder_output=builder_output)
+        # print(constructor_output)
 
-        thinker_output_text = json.dumps(thinker_output, indent=4)
-        builder_output_text = json.dumps(builder_output, indent=4)
+        # thinker_output_text = json.loads(thinker_output)
+        # builder_output_text = json.loads(builder_output)
         constructor_output_text = json.dumps(validate_and_parse_cascade_output(constructor_output), indent=4)
         input_schemas = constructor_output
+
+        pattern = r"\b(?:OpenAIAgent|PromptBuilder)@\d+\b"
+
+        # Find all matches in the input text
+        result_list = re.findall(pattern, builder_output, re.IGNORECASE)
+        result_list = list(set(result_list))
+        print(result_list)
 
         print("Parsing schemas...")
         parsed_input_schemas = validate_and_parse_cascade_output(input_schemas)
@@ -125,7 +133,8 @@ def process_input():
         'thinker_output': thinker_output,
         'builder_output': builder_output,
         'constructor_output': constructor_output_text,
-        'final_result': result
+        'final_result': result,
+        'prompt_list': result_list
 
         # 'thinker_output': thinker_output,
         # 'builder_output': "dummy",
