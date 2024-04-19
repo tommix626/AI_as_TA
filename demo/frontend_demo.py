@@ -16,6 +16,29 @@ thinker = ThinkerModel("gpt-3.5-turbo")
 builder = BuilderModel("gpt-3.5-turbo")
 constructor = ConstructorModel("gpt-3.5-turbo")
 
+def filter_keys_and_values(input_dict):
+    search_keywords = ["openaiagent", "promptbuilder"]
+    filtered_dict = {key: value for key, value in input_dict.items()
+                     for keyword in search_keywords
+                     if keyword.lower() in key.lower()}
+    return filtered_dict
+
+
+def update_prompts(json_data, new_prompts):
+    prompt_index = 0
+    for item in json_data:
+        if 'input_user_prompt' in item.get('parameters', {}):
+            if prompt_index < len(new_prompts):
+                item['parameters']['input_user_prompt'] = new_prompts[prompt_index]
+                prompt_index += 1
+            else:
+                print("Warning: More items with 'input_user_prompt' found than provided strings in new_prompts.")
+                break
+    with open('updated_prompts.json', 'w', encoding='utf-8') as f:
+        json.dump(json_data, f, indent=4, ensure_ascii=False)
+
+    print("Updated prompts saved to 'prompts/data.json'.")
+
 @app.route('/')
 def index():
     with open('prompts/user_thinker.txt', 'w') as file:
@@ -35,37 +58,37 @@ def index():
 @app.route('/modify_prompt', methods=['POST'])
 def modify_prompt():
     data = request.get_json()
-    user_think = data.get('user_think', '')
-    with open('prompts/user_thinker.txt', 'w') as file:
-        file.write(user_think)
-    user_build = data.get('user_build', '')
-    with open('prompts/user_builder.txt', 'w') as file:
-        file.write(user_build)
-    user_construct = data.get('user_construct', '')
-    with open('prompts/user_constructor.txt', 'w') as file:
-        file.write(user_construct)
-    # Return a response to the client (optional)
+    with open('prompts/data.json', 'r') as file:
+        factory_input = json.load(file)
+    # print("data")
+    # print(data)
+    update_prompts(factory_input, data['modifiedText'])
     return jsonify(success=True, message='Prompt modified successfully.')
 
 @app.route('/regenerate', methods=['POST'])
 def regenerate():
     print("regenerating")
-    with open('prompts/factory_input.txt', 'r') as file:
-        factory_input = file.read()
+    with open('prompts/data.json', 'r') as file:
+        factory_input = json.load(file)
     result = ""
-    if(factory_input == ""):
+    if not factory_input:
         result = "Sorry there is no factory input yet."
     else:
-        try:
-            registry = ComponentRegistry()
-            factory = ComponentFactory(registry)
-            factory.setup(factory_input)
+        registry = ComponentRegistry()
+        factory = ComponentFactory(registry)
+        factory.setup(factory_input)
 
-            print("Running factory....")
-            result = factory.run()
-            print("Result = \n" + result)
-        except:
-            result = "Those are the workflows. Sorry we don't have specific output for now. Thank you for using it."
+        print("Running factory....")
+        result = factory.run()
+        print("Result = \n" + result)
+
+        result = factory.run()
+        print("rerunning Result = \n" + result)
+
+        print("perished")
+        factory.perish()
+        result = factory.run()
+        print("Result = \n" + result)
 
     return {
         'final_result': result
@@ -83,63 +106,51 @@ def process_input():
         config = "you don't need an output component leave the final result in the final component is enough"
         input_text += config
         print("running!")
-
-        with open('prompts/thinker.txt', 'r') as file:
-            thinker_prompt = file.read()
-        with open('prompts/builder.txt', 'r') as file:
-            builder_prompt = file.read()
-        with open('prompts/constructor.txt', 'r') as file:
-            constructor_prompt = file.read()
-
-        print(thinker_prompt == "")
         thinker_output = thinker.execute(input_text)
-
         # print(thinker_output)
         builder_output = builder.execute(goal=input_text, thinker_output=thinker_output)
         print(builder_output)
         constructor_output = constructor.execute(goal=input_text+thinker_output, builder_output=builder_output)
         # print(constructor_output)
 
-        # thinker_output_text = json.loads(thinker_output)
-        # builder_output_text = json.loads(builder_output)
+        # thinker_output_text = json.dumps(thinker_output)
+        # builder_output_text = json.dumps(builder_output)
         constructor_output_text = json.dumps(validate_and_parse_cascade_output(constructor_output), indent=4)
         input_schemas = constructor_output
-
-        pattern = r"\b(?:OpenAIAgent|PromptBuilder)@\d+\b"
-
-        # Find all matches in the input text
-        result_list = re.findall(pattern, builder_output, re.IGNORECASE)
-        result_list = list(set(result_list))
-        print(result_list)
-
         print("Parsing schemas...")
         parsed_input_schemas = validate_and_parse_cascade_output(input_schemas)
+        with open('prompts/data.json', 'w', encoding='utf-8') as f:
+            json.dump(parsed_input_schemas, f, ensure_ascii=False, indent=4)
 
         print("Setting up factory....")
-        try:
-            with open('prompts/factory_input.txt', 'w') as file:
-                file.write(parsed_input_schemas)
-            registry = ComponentRegistry()
-            factory = ComponentFactory(registry)
-            factory.setup(parsed_input_schemas)
+        registry = ComponentRegistry()
+        factory = ComponentFactory(registry)
+        factory.setup(parsed_input_schemas)
 
-            print("Running factory....")
-            result = factory.run()
-            print("Result = \n" + result)
-        except:
-            result = "Those are the workflows. Sorry we don't have specific output for now. Thank you for using it."
+        print("Running factory....")
+        result = factory.run()
+        print("Result = \n" + result)
 
+        result = factory.run()
+        print("rerunning Result = \n" + result)
+
+        print("perished")
+        factory.perish()
+        result = factory.run()
+        print("Result = \n" + result)
+        # with open('prompts/factory.txt', 'w', encoding='utf-8') as file:
+        #     file.write(parsed_input_schemas)
+        params = factory.get_modifiable_params()
+        temp = filter_keys_and_values(params)
+        result_list = [(key, value['input_system_prompt']) for key, value in temp.items() if'input_system_prompt' in value]
+        print("-----")
+        print(result_list)
     return {
         'thinker_output': thinker_output,
         'builder_output': builder_output,
         'constructor_output': constructor_output_text,
         'final_result': result,
         'prompt_list': result_list
-
-        # 'thinker_output': thinker_output,
-        # 'builder_output': "dummy",
-        # 'constructor_output': "dummy",
-        # 'final_result': "dummy"
     }
 
 if __name__ == '__main__':

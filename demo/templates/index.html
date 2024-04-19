@@ -27,43 +27,34 @@
     <script>
         document.getElementById('modification-form').onsubmit = function(event) {
             event.preventDefault();
-            let formData = {};
-
-            data.prompt_list.forEach(promptId => {
-                const promptData = document.getElementById(promptId).value;
-                formData[promptId] = promptData;
+            console.log("Entered")
+            var textFieldValues = [];
+            var textFields = this.querySelectorAll('input[type="text"], textarea');
+            textFields.forEach(function(field) {
+                textFieldValues.push(field.value);
+                var label = document.querySelector(`label[for="${field.id}"]`);
+                if (label) {
+                    label.remove();
+                }
+                field.remove();
             });
+            var labels = this.querySelectorAll('labels');
+            labels.forEach(function(label) {
+                label.remove();
+            });
+            console.log(textFieldValues);
+
+            let inputText = document.getElementById('inputText').value;
             fetch('/modify_prompt', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ formData})//todo
+                body: JSON.stringify({ modifiedText: textFieldValues })
             })
             .then(response => response.json())
-            .then(data => {
-                console.log('Prompt modified:', data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            .then(data => {})
         };
-        window.addEventListener('load', () => {
-            const form = document.getElementById('modification-form');
-            data.prompt_list.forEach(promptId => {
-                const label = document.createElement('label');
-                label.setAttribute('for', promptId);
-                label.textContent = promptId;
-
-                const textarea = document.createElement('textarea');
-                textarea.id = promptId;
-                textarea.name = promptId;
-                textarea.rows = 10;
-
-                form.appendChild(label);
-                form.appendChild(textarea);
-            });
-        });
         document.getElementById('input-form').onsubmit = function(event) {
             event.preventDefault();
             let inputText = document.getElementById('inputText').value;
@@ -85,23 +76,27 @@
                 document.getElementById('inputText').value = '';
                 container.scrollTop = container.scrollHeight;
 
-                const dataleft = {
-                    prompt_list: data.prompt_list
-                };
-                const form = document.getElementById('modification-form');
 
-                dataleft.prompt_list.forEach(function(promptId) {
+                const dataleft = data.prompt_list
+                const form = document.getElementById('modification-form');
+                console.log(dataleft)
+                dataleft.forEach(function(promptPair) {
+                    const promptId = promptPair[0];
+                    const promptText = promptPair[1];
+
                     const label = document.createElement('label');
                     label.htmlFor = promptId;
                     label.textContent = promptId;
-                    form.appendChild(label);
 
                     const textarea = document.createElement('textarea');
                     textarea.id = promptId;
                     textarea.name = promptId;
                     textarea.rows = '10';
-                    form.appendChild(textarea);
+                    textarea.value = promptText;
+                    form.insertBefore(textarea, form.firstChild);
+                    form.insertBefore(label, textarea);
                 });
+
             })
             .catch(error => {
                 console.error('Error:', error);

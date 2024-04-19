@@ -143,7 +143,7 @@ class ComponentFactory:
     def perish(self):
         self.entry_component.perish()
 
-    @api_endpoint_identifier
+
     def get_modifiable_params(self):
         """
         Gathers and returns all modifiable parameters from each component registered in the factory's registry.
@@ -155,11 +155,10 @@ class ComponentFactory:
         all_params = {}
         for component_id, component in self.registry.components.items():
             all_params[component_id] = component.modifiable_params
-
         # Convert the dictionary to a JSON-formatted string to standardize the output format
-        return json.dumps(all_params)
+        return all_params
 
-    @api_endpoint_identifier
+
     def update_modifiable_params(self, updates):
         """
         Updates modifiable parameters across multiple components based on provided updates.

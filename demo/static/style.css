@@ -1,4 +1,3 @@
-/* General Reset */
 * {
     margin: 0;
     padding: 0;
@@ -15,10 +14,10 @@ body {
 
 .app-container {
     display: flex;
-    flex-direction: row; /* Aligns children horizontally */
-    flex-wrap: wrap; /* Allows items to wrap onto the next line on smaller screens */
-    gap: 100px; /* Increases space between the containers */
-    justify-content: space-between; /* Spaces out the child elements */
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 100px;
+    justify-content: space-between;
     max-width: 1200px;
     height: 100vh;
     margin: 20px auto;
@@ -26,26 +25,25 @@ body {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    min-height: calc(100vh - 40px); /* New property: min-height of the viewport height minus the top and bottom margins */
+    min-height: calc(100vh - 40px);
 }
 
 #input-modification-container{
     display: flex;
-    overflow-y: auto; /* Make sure the chat is scrollable */
-    flex-direction: column; /* Stacks child elements vertically */
-    justify-content: space-between; /* Aligns the chat input to the bottom */
+    overflow-y: auto;
+    flex-direction: column;
+    justify-content: space-between;
     width: 30%;
-    /*min-width: 300px; !* Minimum width for each container *!*/
-    height: 600px; /* Sets a fixed height to ensure internal elements align properly */
+    height: 600px;
 }
 #chat-container {
     display: flex;
     height: 100vh;
-    margin-top: auto; /* Push it to the bottom */
-    flex-direction: column; /* Stacks child elements vertically */
-    justify-content: space-between; /* Aligns the chat input to the bottom */
+    margin-top: auto;
+    flex-direction: column;
+    justify-content: space-between;
     flex: 1;
-    min-width: 300px; /* Minimum width for each container */
+    min-width: 300px;
 }
 
 #chat-container {
@@ -53,9 +51,9 @@ body {
 }
 
 #chat-content {
-    flex-grow: 1; /* Allows this div to expand and push the form to the bottom */
-    overflow-y: auto; /* Enables scrolling for overflow content */
-    padding: 10px; /* Gives some space inside the chat content area */
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
     max-height: calc(100vh - 170px);
     margin-bottom: 20px;
 }
@@ -63,7 +61,7 @@ body {
 
 #input-form {
     position: absolute;
-    bottom: 0; /* Positions the form at the bottom of the chat-container */
+    bottom: 0;
     width: 100%;
 }
 /* Form and Input Styling */

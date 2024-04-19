@@ -6,13 +6,25 @@ from cascade.builder_model import BuilderModel
 from cascade.constructor_model import ConstructorModel
 from cascade.thinker_model import ThinkerModel
 
+def filter_keys_and_values(input_dict):
+    search_keywords = ["openaiagent", "promptbuilder"]
+    filtered_dict = {key: value for key, value in input_dict.items()
+                     for keyword in search_keywords
+                     if keyword.lower() in key.lower()}
+    return filtered_dict
+
+
+def extract_user_prompts(input_dict):
+    user_prompts = [value['input_system_prompt'] for value in input_dict.values() if 'input_user_prompt' in value]
+    return user_prompts
+
 thinker = ThinkerModel("gpt-3.5-turbo")
 builder = BuilderModel("gpt-3.5-turbo")
 constructor = ConstructorModel("gpt-3.5-turbo")
 
 # Define the initial input for the Thinker model
-# initial_thinker_input = "Instructor: Do a summary for the newest 5 posts from Mastodon and send me a summary of those post with the role of a morning news reporter. I will listen to your summarization while eating breakfast"
-initial_thinker_input = "Instructor: load the material in the file I saved at ./shared/content.txt. I will listen to its summarization while eating breakfast"
+initial_thinker_input = "Instructor: Do a summary for the newest 5 posts from Mastodon and send me a summary of those post with the role of a morning news reporter. I will listen to your summarization while eating breakfast"
+#initial_thinker_input = "Instructor: load the material in the file I saved at ./shared/content.txt. I will listen to its summarization while eating breakfast"
 config = "you don't need an output component leave the final result in the final component is enough"
 initial_thinker_input += config
 
@@ -44,6 +56,7 @@ registry = ComponentRegistry()
 factory = ComponentFactory(registry)
 factory.setup(parsed_input_schemas)
 
+
 print("Running factory....")
 result = factory.run()
 print("Result = \n" + result)
@@ -54,6 +67,9 @@ print("rerunning Result = \n" + result)
 
 print("perished")
 factory.perish()
-print(factory.get_modifiable_params)
 result = factory.run()
 print("Result = \n" + result)
+temp = factory.get_modifiable_params()
+aaa = filter_keys_and_values(temp)
+bb = extract_user_prompts(aaa)
+print(bb)
