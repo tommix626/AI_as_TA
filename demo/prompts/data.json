@@ -14,17 +14,17 @@
         "name": "OpenAIAgent",
         "id": "OpenAIAgent@2345",
         "parameters": {
-            "input_system_prompt": "You are tasked with analyzing the newest 5 posts from Mastodon to extract relevant information for a morning news report.",
+            "input_system_prompt": "You are tasked with summarizing the newest 5 posts from Mastodon. Please provide a clear and informative summary.",
             "input_user_prompt": "##HTTP_API_Get@7653",
-            "temperature": "0.6"
+            "temperature": "0.5"
         },
         "outputs": {}
     },
     {
         "name": "PromptBuilder",
-        "id": "PromptBuilder@8901",
+        "id": "PromptBuilder@8765",
         "parameters": {
-            "template_prompt": "As a morning news reporter, summarize the newest 5 posts from Mastodon in a broadcast-style report.",
+            "template_prompt": "Good morning! Here are the latest updates from Mastodon: {first_var}. Stay tuned for the details.",
             "first_var": "##OpenAIAgent@2345",
             "second_var": "",
             "third_var": ""

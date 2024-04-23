@@ -77,7 +77,8 @@
                 container.scrollTop = container.scrollHeight;
 
 
-                const dataleft = data.prompt_list
+                let dataleft = data.prompt_list
+                dataleft.push(["User Input", ""]) //temp user input
                 const form = document.getElementById('modification-form');
                 console.log(dataleft)
                 dataleft.forEach(function(promptPair) {
