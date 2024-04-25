@@ -1,0 +1,46 @@
+from components.base_component import BaseComponent
+import json
+
+class UserInputComponent(BaseComponent):
+    # Descriptions based on the earlier specifications
+    component_schema = r"""
+    {
+  "name": "UserInput",
+  "description": "Captures user input and makes it available as the starting point of a processing workflow. The component can handle various types of inputs including text, numeric, and structured data.",
+  "inputs": [
+    {
+      "parameter": "user_input",
+      "description": "The data input by the user. This can be text, numeric values, or structured data, depending on the application's needs.",
+      "type": "string",
+      "example": "Enter your query here or specify parameters for data retrieval."
+    }
+  ],
+  "outputs": [
+    {
+      "parameter": "output",
+      "description": "The exact data entered by the user, passed through without modification to ensure accuracy and integrity in subsequent processing.",
+      "type": "dynamic",
+      "example": "User-entered query or data parameters."
+    }
+  ]
+}
+"""
+    thinker_description = r"""The UserInputComponent is crucial in systems that initiate processes based on direct user interaction. This component serves as the primary entry point for user data, making it indispensable in applications where the workflow's direction or output is dictated by user preferences, queries, or commands. Its role is to accurately capture and forward user inputs to subsequent processing stages, ensuring that the data provided by the user is preserved without modification. Ideal scenarios for its deployment include interactive query systems, dynamic reporting tools, and personalized service applications where user feedback or commands are necessary to drive the system's logic. By employing this component at the beginning of such workflows, systems can dynamically adapt to varied inputs, providing tailored responses or actions based on individual user needs."""
+    builder_description = r"""The UserInputComponent is designed for seamless integration into any workflow that requires an initial user input as a trigger or data source. From a technical standpoint, this component is implemented to accept a wide range of input types — text, numbers, or structured formats — making it highly adaptable to different user interaction paradigms. The simplicity of its design, where it acts merely as a conduit for passing user input into the system, means that it can be easily configured and deployed without the need for extensive setup. Developers can integrate this component at the start of any pipeline that depends on user data, ensuring that the input is immediately available for downstream components without delay. Furthermore, due to its design as a generic input handler, this component can be reused across multiple applications with minimal changes, thereby standardizing how user input is handled in diverse systems."""
+    def __init__(self, component_id, user_input, **kwargs):
+        super().__init__(component_id)
+        self.user_input = user_input  # Directly using the input provided during initialization, factory pass it in
+
+    def prepare_inputs(self):
+        # No preparation necessary; input is taken directly from initialization
+        pass
+
+    def execute(self, inputs):
+        # Directly pass the user input as output
+        self.output = self.user_input
+        self.is_output_fresh = True
+
+    def get_output(self):
+        if not self.is_output_fresh:
+            self.run()
+        return self.output
