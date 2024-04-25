@@ -4,6 +4,7 @@ import re
 
 from cascade.builder_model import BuilderModel
 from cascade.constructor_model import ConstructorModel
+from cascade.safe_cascade_driver import SafeCascadeDriver
 from cascade.thinker_model import ThinkerModel
 
 from components.component_factory.component_factory import ComponentFactory
@@ -34,7 +35,7 @@ def update_prompts(json_data, new_prompts):
             else:
                 print("Warning: More items with 'input_user_prompt' found than provided strings in new_prompts.")
                 break
-    with open('updated_prompts.json', 'w', encoding='utf-8') as f:
+    with open('prompts/data.json', 'w', encoding='utf-8') as f:
         json.dump(json_data, f, indent=4, ensure_ascii=False)
 
     print("Updated prompts saved to 'prompts/data.json'.")
@@ -106,11 +107,17 @@ def process_input():
         config = "you don't need an output component leave the final result in the final component is enough"
         input_text += config
         print("running!")
-        thinker_output = thinker.execute(input_text)
+        driver = SafeCascadeDriver("gpt-3.5-turbo", "gpt-3.5-turbo", "gpt-3.5-turbo", max_retry_times=3)
+        driver.execute(input_text)
+        print(f"Final Thinker Output: {driver.thinker_output}")
+        print(f"Final Builder Output: {driver.thinker_output}")
+        print(f"Final Constructor Output: {driver.constructor_output}")
+
+        thinker_output = driver.thinker_output
         # print(thinker_output)
-        builder_output = builder.execute(goal=input_text, thinker_output=thinker_output)
+        builder_output = driver.builder_output
         print(builder_output)
-        constructor_output = constructor.execute(goal=input_text+thinker_output, builder_output=builder_output)
+        constructor_output = driver.constructor_output
         # print(constructor_output)
 
         # thinker_output_text = json.dumps(thinker_output)
@@ -126,6 +133,8 @@ def process_input():
         registry = ComponentRegistry()
         factory = ComponentFactory(registry)
         factory.setup(parsed_input_schemas)
+
+
 
         print("Running factory....")
         result = factory.run()

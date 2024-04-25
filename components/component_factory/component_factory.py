@@ -155,7 +155,11 @@ class ComponentFactory:
         all_params = {}
         for component_id, component in self.registry.components.items():
             all_params[component_id] = component.modifiable_params
+
+        print("$$$$$$$$$$$$$")
+        print(all_params)
         # Convert the dictionary to a JSON-formatted string to standardize the output format
+
         return all_params
 
 

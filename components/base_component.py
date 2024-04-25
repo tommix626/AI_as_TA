@@ -73,6 +73,8 @@ class BaseComponent:
             param_name = input_param["parameter"]
             param_value = getattr(self, param_name, None)  # Default to None if not set
             params[param_name] = param_value
+        # print("$$$$$$$$$$$$$")
+        # print(params)
         return params
 
     @deprecated.deprecated #should not use, can directly use the registry to wrap around.
