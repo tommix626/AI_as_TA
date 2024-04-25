@@ -14,9 +14,9 @@
         "name": "OpenAIAgent",
         "id": "OpenAIAgent@2345",
         "parameters": {
-            "input_system_prompt": "You are tasked with summarizing the newest 5 posts from Mastodon. Please provide a clear and informative summary.",
+            "input_system_prompt": "Just reply UNDERSTOOD.",
             "input_user_prompt": "##HTTP_API_Get@7653",
-            "temperature": "0.5"
+            "temperature": "0.6"
         },
         "outputs": {}
     },
@@ -24,7 +24,7 @@
         "name": "PromptBuilder",
         "id": "PromptBuilder@8765",
         "parameters": {
-            "template_prompt": "Good morning! Here are the latest updates from Mastodon: {first_var}. Stay tuned for the details.",
+            "template_prompt": "Just reply UNDERSTOOD.",
             "first_var": "##OpenAIAgent@2345",
             "second_var": "",
             "third_var": ""

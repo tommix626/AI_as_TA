@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import re
+import ast
 
 from cascade.builder_model import BuilderModel
 from cascade.constructor_model import ConstructorModel
@@ -25,36 +26,24 @@ def filter_keys_and_values(input_dict):
     return filtered_dict
 
 
-def update_prompts(json_data, new_prompts):
-    prompt_index = 0
-    for item in json_data:
-        if 'input_user_prompt' in item.get('parameters', {}):
-            if prompt_index < len(new_prompts):
-                item['parameters']['input_user_prompt'] = new_prompts[prompt_index]
-                prompt_index += 1
-            else:
-                print("Warning: More items with 'input_user_prompt' found than provided strings in new_prompts.")
-                break
-    with open('prompts/data.json', 'w', encoding='utf-8') as f:
-        json.dump(json_data, f, indent=4, ensure_ascii=False)
 
-    print("Updated prompts saved to 'prompts/data.json'.")
+
+def update_prompts(json_data, new_prompts):
+    # updates = json.dumps(new_prompts)
+    # Apply updates to the json_data based on the id
+    for item in json_data:
+        item_id = item['id']
+        if item_id in new_prompts:
+            # Safely evaluate the string representation of the dictionary
+            new_parameters = ast.literal_eval(new_prompts[item_id])
+            item['parameters'].update(new_parameters)
+    with open('prompts/data.json', 'w', encoding='utf-8') as f:
+        json.dump(json_data, f, ensure_ascii=False, indent=4)
+
 
 @app.route('/')
 def index():
-    with open('prompts/user_thinker.txt', 'w') as file:
-        pass
-    with open('prompts/user_builder.txt', 'w') as file:
-        pass
-    with open('prompts/user_constructor.txt', 'w') as file:
-        pass
-    with open('prompts/thinker.txt', 'r') as file:
-        thinker = file.read()
-    with open('prompts/builder.txt', 'r') as file:
-        builder = file.read()
-    with open('prompts/constructor.txt', 'r') as file:
-        constructor = file.read()
-    return render_template('index.html', thinker = thinker, builder = builder, constructor = constructor)
+    return render_template('index.html')
 
 # @app.route('/factory/run')
 # def hello():
@@ -65,11 +54,14 @@ def index():
 @app.route('/modify_prompt', methods=['POST'])
 def modify_prompt():
     data = request.get_json()
+    print("xxxxxxxxxxxxxxxxxxxx")
+    print(data)
+    print("xxxxxxxxxxxxxxxxxxxx")
     with open('prompts/data.json', 'r') as file:
         factory_input = json.load(file)
     # print("data")
     # print(data)
-    update_prompts(factory_input, data['modifiedText'])
+    update_prompts(factory_input, data)
     return jsonify(success=True, message='Prompt modified successfully.')
 
 @app.route('/regenerate', methods=['POST'])
@@ -122,7 +114,7 @@ def process_input():
         thinker_output = driver.thinker_output
         # print(thinker_output)
         builder_output = driver.builder_output
-        print(builder_output)
+        # print(builder_output)
         constructor_output = driver.constructor_output
         # print(constructor_output)
 
@@ -140,8 +132,6 @@ def process_input():
         factory = ComponentFactory(registry)
         factory.setup(parsed_input_schemas)
 
-
-
         print("Running factory....")
         result = factory.run()
         print("Result = \n" + result)
@@ -156,8 +146,10 @@ def process_input():
         # with open('prompts/factory.txt', 'w', encoding='utf-8') as file:
         #     file.write(parsed_input_schemas)
         params = factory.get_modifiable_params()
-        temp = filter_keys_and_values(params)
-        result_list = [(key, value['input_system_prompt']) for key, value in temp.items() if'input_system_prompt' in value]
+
+        # temp = filter_keys_and_values(params)
+        # result_list = [(key, value['input_system_prompt']) for key, value in temp.items() if'input_system_prompt' in value]
+        result_list = [(key, str(value)) for key, value in params.items()]
         print("-----")
         print(result_list)
     return {

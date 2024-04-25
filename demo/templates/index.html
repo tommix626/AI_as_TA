@@ -28,10 +28,16 @@
         document.getElementById('modification-form').onsubmit = function(event) {
             event.preventDefault();
             console.log("Entered")
-            var textFieldValues = [];
+            var textFieldValues = {};
             var textFields = this.querySelectorAll('input[type="text"], textarea');
             textFields.forEach(function(field) {
-                textFieldValues.push(field.value);
+                let ttemp = field.value;
+
+                const cleanedInput = ttemp.replace(/, 'input_user_prompt':.*?(?=[,}])/s, '');
+                const t = cleanedInput.replace(/, 'second_var':.*?(?=[,}])/s, '');
+                const finalOutput = t.replace(/, 'first_var':.*?(?=[,}])/s, '');
+
+                textFieldValues[field.id] = finalOutput;
                 var label = document.querySelector(`label[for="${field.id}"]`);
                 if (label) {
                     label.remove();
@@ -42,7 +48,8 @@
             labels.forEach(function(label) {
                 label.remove();
             });
-            console.log(textFieldValues);
+            output = JSON.stringify(textFieldValues)
+            console.log(output);
 
             let inputText = document.getElementById('inputText').value;
             fetch('/modify_prompt', {
@@ -50,7 +57,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ modifiedText: textFieldValues })
+                body: output
             })
             .then(response => response.json())
             .then(data => {})
@@ -78,7 +85,6 @@
 
 
                 let dataleft = data.prompt_list
-                dataleft.push(["User Input", ""]) //temp user input
                 const form = document.getElementById('modification-form');
                 console.log(dataleft)
                 dataleft.forEach(function(promptPair) {
