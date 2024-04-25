@@ -2,6 +2,7 @@ import json
 import logging
 
 from collections import defaultdict, deque
+from typing import Dict, Any
 
 from components.base_component import BaseComponent
 from components.component_factory.component_registry import ComponentRegistry
@@ -52,19 +53,30 @@ def _parse_and_sort_dependencies(components: list[dict[str, str]]) -> list[str]:
     return sorted_ids
 
 
-def api_endpoint_identifier(args):
-    pass
+def api_endpoint_identifier(func):
+    def wrapper(*args, **kwargs):
+        print(f"Calling the API function {func.__name__}")
+
+        result = func(*args, **kwargs)
+
+        print(f"Done calling API function {func.__name__}")
+
+        return result
+
+    return wrapper
 
 
 class ComponentFactory:
     """
     a factory is a representation over a single flow/graph.
     """
+    user_params: dict[str, str]
     entry_component: BaseComponent
 
     def __init__(self, registry: ComponentRegistry):
         self.registry = registry  # factory will populate this registry with components and dependency.
         self.entry_component = None
+        self.user_params = {} #contains the extra parameters that are dynamically set by the user (setting, user_input etc.)
 
     def create_component(self, cascade_component_content_schema):
         """Create a component based on the schema. Schema is the output of the llm orchestration"""
@@ -144,6 +156,7 @@ class ComponentFactory:
         self.entry_component.perish()
 
 
+    @api_endpoint_identifier
     def get_modifiable_params(self):
         """
         Gathers and returns all modifiable parameters from each component registered in the factory's registry.
@@ -163,6 +176,7 @@ class ComponentFactory:
         return all_params
 
 
+    @api_endpoint_identifier
     def update_modifiable_params(self, updates):
         """
         Updates modifiable parameters across multiple components based on provided updates.
@@ -178,8 +192,10 @@ class ComponentFactory:
             else:
                 logging.warning(f"No component found with ID {component_id} for update.")
 
+    @api_endpoint_identifier
     def get_user_params(self):
         return {"user_input":"placeholder text"}
 
+    @api_endpoint_identifier
     def set_user_params(self, updates):
-        pass
+        self.user_params = updates
