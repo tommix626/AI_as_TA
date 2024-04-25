@@ -56,6 +56,12 @@ def index():
         constructor = file.read()
     return render_template('index.html', thinker = thinker, builder = builder, constructor = constructor)
 
+# @app.route('/factory/run')
+# def hello():
+#     result = factory.run()
+#     print("rerunning Result = \n" + result)
+#     return result
+
 @app.route('/modify_prompt', methods=['POST'])
 def modify_prompt():
     data = request.get_json()

@@ -178,3 +178,7 @@ class ComponentFactory:
             else:
                 logging.warning(f"No component found with ID {component_id} for update.")
 
+    def get_user_params(self):
+        return {"user_input":"placeholder text"}
+
+    def set_user_params(self, updates):
