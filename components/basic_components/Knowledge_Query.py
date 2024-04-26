@@ -64,25 +64,8 @@ class KnowledgeQueryComponent(BaseComponent):
         self.k = k
         self.openai_api_key = openai_api_key
 
-    def prepare_inputs(self):
-        inputs = {}
 
-        # query
-        inputs['query'] = self.query() if callable(self.query) else self.query
-        if not isinstance(inputs['query'], str):
-            raise TypeError("query should be a string.")
-
-        # knowledge_data
-        inputs['knowledge_data'] = self.knowledge_data() if callable(self.knowledge_data) else self.knowledge_data
-        if not isinstance(inputs['knowledge_data'], str):
-            raise TypeError("knowledge_data should be a string.")
-
-        # Temperature
-        inputs['k'] = str(self.k() if callable(self.k) else self.k)
-
-        return inputs
-
-    def execute(self, inputs):
+    def execute(self, inputs, user_params=None):
         openai.api_key = self.openai_api_key
         Chroma_vs = self._initialize_chroma_vectorstore(inputs)
 
@@ -104,10 +87,6 @@ class KnowledgeQueryComponent(BaseComponent):
         self.output = json.dumps({"documents": retrived_content })
         self.is_output_fresh = True
 
-    def get_output(self):
-        if not self.is_output_fresh:
-            self.run()
-        return self.output
 
     def _initialize_chroma_vectorstore(self,inputs):
         # Manually prepare the documents from the input string

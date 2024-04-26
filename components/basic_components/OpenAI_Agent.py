@@ -84,25 +84,14 @@ class OpenAIAgentComponent(BaseComponent):
         self.input_user_prompt = input_user_prompt
         self.temperature = temperature
 
-    def prepare_inputs(self):
-        inputs = {}
+    def prepare_inputs(self, user_params=None):
 
-        # System Prompt
-        inputs['input_system_prompt'] = self.input_system_prompt() if callable(self.input_system_prompt) else self.input_system_prompt
-        if not isinstance(inputs['input_system_prompt'], str):
-            raise TypeError("System prompt should be a string.")
+        # Check if temperature is a float; convert to string
+        if not callable(self.temperature):
+            self.temperature = str(self.temperature) if not isinstance(self.temperature, str) else self.temperature
+        return super().prepare_inputs(user_params)
 
-        # User Prompt
-        inputs['input_user_prompt'] = self.input_user_prompt() if callable(self.input_user_prompt) else self.input_user_prompt
-        if not isinstance(inputs['input_user_prompt'], str):
-            raise TypeError("User prompt should be a string.")
-
-        # Temperature
-        inputs['temperature'] = str(self.temperature() if callable(self.temperature) else self.temperature)
-
-        return inputs
-
-    def execute(self, inputs):
+    def execute(self, inputs, user_params=None):
         openai.api_key = self.api_key
         try:
             # Assuming temperature is a float; convert from string

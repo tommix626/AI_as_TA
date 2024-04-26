@@ -36,16 +36,8 @@ class DocumentLoaderComponent(BaseComponent):
         super().__init__(component_id)
         self.resource_path = resource_path
 
-    def prepare_inputs(self):
-        inputs = {}
 
-        inputs['resource_path'] = self.resource_path() if callable(self.resource_path) else self.resource_path
-        # Ensure the resource path is a string
-        if not isinstance(self.resource_path, str):
-            raise TypeError("resource_path should be a string.")
-        return inputs
-
-    def execute(self, inputs):
+    def execute(self, inputs, user_params=None):
         # Determine the file type and choose the appropriate loader
         if inputs['resource_path'].endswith('.pdf'):
             self.output = self._load_docx_content(inputs['resource_path']) #should be pdf
@@ -57,10 +49,6 @@ class DocumentLoaderComponent(BaseComponent):
             raise ValueError("Unsupported file type. Only PDF, DOCX, and TXT are supported.")
         self.is_output_fresh = True
 
-    def get_output(self):
-        if not self.is_output_fresh:
-            self.run()
-        return self.output
 
     # def _load_pdf_content(self, path):
     #     # Load and extract text from a PDF file

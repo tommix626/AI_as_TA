@@ -119,27 +119,8 @@ content: ""
         self.headers = headers
         self.body = body
 
-    def prepare_inputs(self):
-        inputs = {}
 
-        # URL
-        inputs['url'] = self.url() if callable(self.url) else self.url
-        if not isinstance(inputs['url'], str):
-            raise TypeError("URL should be a string.")
-
-        # Headers
-        inputs['headers'] = self.headers() if callable(self.headers) else self.headers
-        if not isinstance(inputs['headers'], str):
-            raise TypeError("Headers should be a string.")
-
-        # Body
-        inputs['body'] = self.body() if callable(self.body) else self.body
-        if not isinstance(inputs['body'], str):
-            raise TypeError("Body should be a string.")
-
-        return inputs
-
-    def execute(self, inputs):
+    def execute(self, inputs, user_params=None):
         try:
             # Convert 'headers' and 'body' from string to dictionary for the request
             headers = json.loads(inputs['headers'])

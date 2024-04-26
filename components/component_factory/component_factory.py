@@ -150,7 +150,10 @@ class ComponentFactory:
         return True
 
     def run(self):
-        return self.entry_component.get_output()
+        """Run the factory's entry component and return the output."""
+        if self.user_params == {}:
+            return self.entry_component.get_output()
+        return self.entry_component.get_output(user_params=self.user_params)
 
     def perish(self):
         self.entry_component.perish()
@@ -169,9 +172,8 @@ class ComponentFactory:
         for component_id, component in self.registry.components.items():
             all_params[component_id] = component.modifiable_params
 
-        print("$$$$$$$$$$$$$")
-        print(all_params)
-        # Convert the dictionary to a JSON-formatted string to standardize the output format
+        # print("$$$$$$$$$$$$$")
+        # print(all_params)
 
         return all_params
 
@@ -194,8 +196,25 @@ class ComponentFactory:
 
     @api_endpoint_identifier
     def get_user_params(self):
-        return {"user_input":"placeholder text"}
+        """
+        Gathers and returns all user parameters from each component registered in the factory's registry.
+
+        Returns:
+            dict: A dictionary where keys are component IDs and values are dictionaries
+                  of parameter names and their current values.
+        """
+        user_params = {}
+        for component_id, component in self.registry.components.items():
+            user_params[component_id] = component.user_params
+        return user_params
 
     @api_endpoint_identifier
     def set_user_params(self, updates):
-        self.user_params = updates
+        """
+        Updates user parameters across multiple components based on provided updates.
+
+        Args:
+            updates (dict): A dictionary where keys are component IDs and values are dictionaries
+                            of parameter names and their new values.
+        """
+        self.user_params.update(updates)

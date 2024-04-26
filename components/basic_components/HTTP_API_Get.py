@@ -180,33 +180,30 @@ content: ""
         self.url = url
         self.headers = headers
 
-    def prepare_inputs(self):
-        """Prepare the inputs for the HTTP GET request."""
-        inputs = {}
+    def prepare_inputs(self, user_params=None):
+        """
+        Prepare the inputs for the HTTP GET request. This method is responsible for preparing the inputs
+        that will be used by the HTTP GET request. It does this by calling the `prepare_inputs` method
+        from the parent class and converting the 'headers' input from a string to a dictionary.
 
-        # Resolving 'url'
-        if isinstance(self.url, str):
-            inputs['url'] = self.url
-        elif callable(self.url):
-            inputs['url'] = self.url()  # Assuming 'url' is set to a callback function
-        else:
-            self.logger.error("Invalid Url Meta Type. It should be either a string or a call-back get_output function")
-            raise TypeError
+        Args:
+            user_params (dict, optional): Additional user parameters. Defaults to None.
 
-        # Resolving 'headers'
-        #TODO add a decorator for the optional variables.
-        if isinstance(self.headers, str):
-            inputs['headers'] = convert_header_str_to_dict(self.headers)
-        elif callable(self.headers):
-            inputs['headers'] = self.headers()  # Assuming 'headers' is set to a callback function
-        else:
-            self.logger.error("Invalid headers Meta Type. It should be either a string or a call-back get_output function")
-            raise TypeError
+        Returns:
+            dict: A dictionary where the keys are the input parameter names and the values are the
+                  corresponding input values.
+        """
+
+        inputs = super().prepare_inputs(user_params)
+
+        inputs['headers'] = convert_header_str_to_dict(inputs['headers'])
 
         return inputs
 
-    def execute(self, inputs):
-        """Execute the HTTP GET request with prepared inputs."""
+    def execute(self, inputs, user_params=None):
+        """Execute the HTTP GET request with prepared inputs.
+        :param user_params:
+        """
         try:
             response = requests.get(inputs['url'], headers=inputs.get('headers', {}))
             self.output = response.json()
@@ -217,10 +214,3 @@ content: ""
 
         self.is_output_fresh = True if self.output else False
         self.output = str(self.output) #chaneg the output to str
-
-    def get_output(self):
-        """Retrieve the component's output if it is fresh."""
-        if not self.is_output_fresh:
-            self.logger.warning("Attempted to access stale output. Triggering run.")
-            self.run()
-        return self.output

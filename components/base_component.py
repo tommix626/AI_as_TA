@@ -26,7 +26,7 @@ class BaseComponent:
         """Optionally used by upstream components to track downstream components. Placeholder for now."""
         pass
 
-    def run(self):
+    def run(self,user_params=None):
         """Execute the component.
             NOTE: it has no return value, the result is set to self.output.
         """
@@ -39,19 +39,41 @@ class BaseComponent:
         self.execute(inputs)
         self.is_output_fresh = True
 
-    def prepare_inputs(self):
-        """Prepare inputs for the component. To be implemented by subclasses."""
-        raise NotImplementedError("Subclasses must implement this method to prepare inputs.")
+    def prepare_inputs(self, user_params=None):
+        """
+        Prepare inputs for the component. This method is intended to be overridden by subclasses for further processing.
+        currently just in charge of calling callback functions of upstream components.
 
-    def execute(self, inputs):
-        """Execute the component's main logic with the prepared inputs. To be implemented by subclasses."""
+        Args:
+            user_params (dict, optional): Additional user parameters. Defaults to None.
+
+        Returns:
+            dict: A dictionary where the keys are the input parameter names and the values are the
+                  corresponding input values.
+        """
+        inputs = {}
+        for input_param in self.component_schema['inputs']:
+            param_name = input_param['parameter']
+            param_value = getattr(self, param_name, None)
+            if callable(param_value): # calling upstream components get_output() function with passed in user_params.
+                param_value = param_value(user_params=user_params)
+
+            if not isinstance(param_value, str):
+                raise TypeError("processed variables should end up being a string.")
+            inputs[param_name] = param_value
+        return inputs
+
+    def execute(self, inputs, user_params=None):
+        """Execute the component's main logic with the prepared inputs. To be implemented by subclasses.
+        :param user_params:
+        """
         raise NotImplementedError("Subclasses must implement this method for execution.")
 
-    def get_output(self):
+    def get_output(self,user_params=None):
         """Retrieve the component's output if it is fresh, or invoke the main run if the output is not fresh"""
         if not self.is_output_fresh:
-            self.run()
-            # self.logger.warning("Attempted to access stale output.")
+            self.run(user_params=user_params)
+            self.logger.warning("Attempted to access stale output. Triggering run.")
         return self.output
 
     def perish(self):
@@ -75,6 +97,18 @@ class BaseComponent:
             params[param_name] = param_value
         # print("$$$$$$$$$$$$$")
         # print(params)
+        return params
+
+    @property
+    def user_params(self):
+        """Dynamically retrieve user parameters based on the component schema."""
+        schema = self.get_component_schema()
+        params = {}
+        for input_param in schema.get("inputs", []):
+            if input_param["type"] == "user_param":
+                param_name = input_param["parameter"]
+                param_value = getattr(self, param_name, None)  # Default to None if not set
+                params[param_name] = param_value
         return params
 
     @deprecated.deprecated #should not use, can directly use the registry to wrap around.

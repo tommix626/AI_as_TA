@@ -11,7 +11,7 @@ class UserInputComponent(BaseComponent):
     {
       "parameter": "user_input",
       "description": "The data input by the user. This can be text, numeric values, or structured data, depending on the application's needs.",
-      "type": "string",
+      "type": "user_param",
       "example": "Enter your query here or specify parameters for data retrieval."
     }
   ],
@@ -19,7 +19,7 @@ class UserInputComponent(BaseComponent):
     {
       "parameter": "output",
       "description": "The exact data entered by the user, passed through without modification to ensure accuracy and integrity in subsequent processing.",
-      "type": "dynamic",
+      "type": "string",
       "example": "User-entered query or data parameters."
     }
   ]
@@ -31,16 +31,17 @@ class UserInputComponent(BaseComponent):
         super().__init__(component_id)
         self.user_input = user_input  # Directly using the input provided during initialization, factory pass it in
 
-    def prepare_inputs(self):
-        # No preparation necessary; input is taken directly from initialization
-        pass
+    def prepare_inputs(self, user_params=None):
+        # update the user_input from the user_params if available
+        self.user_input = user_params[self.component_id]["user_input"] if user_params and self.component_id in user_params else self.user_input
 
-    def execute(self, inputs):
+        return super().prepare_inputs(user_params=user_params)
+
+    def execute(self, inputs, user_params=None):
+
+        # Check if user input is provided in the user_params
+        self.user_input = user_params[self.component_id]["user_input"] if user_params and self.component_id in user_params else self.user_input
         # Directly pass the user input as output
         self.output = self.user_input
         self.is_output_fresh = True
 
-    def get_output(self):
-        if not self.is_output_fresh:
-            self.run()
-        return self.output
