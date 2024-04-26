@@ -193,6 +193,10 @@ class ComponentFactory:
         for component_id, params in updates.items():
             component = self.registry.get(component_id)
             if component:
+                # strip the description from the params. should not be updated.
+                if "description" in params:
+                    params.pop("description")
+
                 component.update_modifiable_params(params)
             else:
                 logging.warning(f"No component found with ID {component_id} for update.")
