@@ -1,33 +1,21 @@
 [
     {
-        "name": "DocumentLoader",
-        "id": "DocumentLoader@7652",
+        "name": "UserInput",
+        "id": "UserInput@5t8",
         "parameters": {
-            "resource_path": "./shared/syllabus.txt"
+            "user_input": "Enter the text that requires rewriting here."
         },
         "outputs": {
-            "document_content": ""
-        }
-    },
-    {
-        "name": "KnowledgeQuery",
-        "id": "KnowledgeQuery@2341",
-        "parameters": {
-            "query": "Extract key details from the syllabus document.",
-            "knowledge_data": "##DocumentLoader@7652",
-            "k": "5"
-        },
-        "outputs": {
-            "retrieved_documents": ""
+            "output": ""
         }
     },
     {
         "name": "OpenAIAgent",
-        "id": "OpenAIAgent@9987",
+        "id": "OpenAIAgent@2p9",
         "parameters": {
-            "input_system_prompt": "You are tasked with summarizing the syllabus content for the instructor to access during breakfast.",
-            "input_user_prompt": "##KnowledgeQuery@2341",
-            "temperature": "0.5"
+            "input_system_prompt": "You are an AI assistant tasked with providing rewriting suggestions for the given text.",
+            "input_user_prompt": "##UserInput@5t8",
+            "temperature": "0.6"
         },
         "outputs": {}
     }
