@@ -76,7 +76,7 @@ def submit_student():
     chat = data['inputText']
     print(chat)
     print("regenerating")
-    with open('prompts/demo.json', 'r') as file:
+    with open('prompts/data.json', 'r') as file:
         factory_input = json.load(file)
     result = ""
     if not factory_input:
