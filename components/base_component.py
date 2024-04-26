@@ -55,7 +55,7 @@ class BaseComponent:
                   corresponding input values.
         """
         inputs = {}
-        for input_param in self.component_schema['inputs']:
+        for input_param in self.get_component_schema()['inputs']:
             param_name = input_param['parameter']
             param_value = getattr(self, param_name, None)
             if callable(param_value): # calling upstream components get_output() function with passed in user_params.

@@ -116,7 +116,7 @@ class ComponentFactory:
                 upstream_component = self.registry.get(upstream_id)
                 if upstream_component:
                     # Setup callback or direct assignment as needed
-                    callback = lambda: upstream_component.get_output()
+                    callback = lambda user_params=None: upstream_component.get_output(user_params=user_params)
                     setattr(component, param_name, callback)
                     component.add_dependency(upstream_component)
                 else:
