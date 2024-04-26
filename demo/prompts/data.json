@@ -1,7 +1,7 @@
 [
     {
         "name": "HTTP_API_Get",
-        "id": "HTTP_API_Get@7654",
+        "id": "HTTP_API_Get@7653",
         "parameters": {
             "url": "https://mastodon.social/api/v1/timelines/public?limit=5",
             "headers": ""
@@ -14,17 +14,17 @@
         "name": "OpenAIAgent",
         "id": "OpenAIAgent@2345",
         "parameters": {
-            "input_system_prompt": "You are tasked with summarizing the 5 latest posts from Mastodon. Provide a concise summary of each post.",
-            "input_user_prompt": "##HTTP_API_Get@7654",
-            "temperature": "0.6"
+            "input_system_prompt": "You are tasked with summarizing the 5 newest posts from Mastodon. Focus on extracting key information and presenting it concisely.",
+            "input_user_prompt": "##HTTP_API_Get@7653",
+            "temperature": "0.5"
         },
         "outputs": {}
     },
     {
         "name": "PromptBuilder",
-        "id": "PromptBuilder@7890",
+        "id": "PromptBuilder@0987",
         "parameters": {
-            "template_prompt": "Good morning! Here are the latest updates from Mastodon:\n{first_var}",
+            "template_prompt": "Good morning! Here are the highlights from the latest posts on Mastodon:\n{first_var}",
             "first_var": "##OpenAIAgent@2345",
             "second_var": "",
             "third_var": ""
