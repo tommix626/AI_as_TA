@@ -1,7 +1,7 @@
 [
     {
         "name": "HTTP_API_Get",
-        "id": "HTTP_API_Get@7653",
+        "id": "HTTP_API_Get@7654",
         "parameters": {
             "url": "https://mastodon.social/api/v1/timelines/public?limit=5",
             "headers": ""
@@ -12,10 +12,10 @@
     },
     {
         "name": "OpenAIAgent",
-        "id": "OpenAIAgent@2345",
+        "id": "OpenAIAgent@2341",
         "parameters": {
-            "input_system_prompt": "Just reply UNDERSTOOD.",
-            "input_user_prompt": "##HTTP_API_Get@7653",
+            "input_system_prompt": "You are tasked with summarizing the newest 5 posts from Mastodon. Identify key events, trending topics, and noteworthy discussions.",
+            "input_user_prompt": "##HTTP_API_Get@7654",
             "temperature": "0.6"
         },
         "outputs": {}
@@ -24,8 +24,8 @@
         "name": "PromptBuilder",
         "id": "PromptBuilder@8765",
         "parameters": {
-            "template_prompt": "Just reply UNDERSTOOD.",
-            "first_var": "##OpenAIAgent@2345",
+            "template_prompt": "Good morning! Here are the latest updates from Mastodon: {first_var}. Get ready for a quick overview of the trending topics and key events.",
+            "first_var": "##OpenAIAgent@2341",
             "second_var": "",
             "third_var": ""
         },
