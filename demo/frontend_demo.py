@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import json
 import re
 import ast
@@ -12,7 +12,22 @@ from components.component_factory.component_factory import ComponentFactory
 from components.component_factory.component_registry import ComponentRegistry
 from schema.utils import validate_and_parse_cascade_output
 
+
 app = Flask(__name__)
+app.secret_key = '12345'
+
+
+global_data = None
+
+@app.route('/set')
+def set_data(input):
+    global global_data
+    global_data = input
+    return 'Data set!'
+
+@app.route('/get')
+def get_data():
+    return global_data
 
 thinker = ThinkerModel("gpt-3.5-turbo")
 builder = BuilderModel("gpt-3.5-turbo")
@@ -25,7 +40,11 @@ def filter_keys_and_values(input_dict):
                      if keyword.lower() in key.lower()}
     return filtered_dict
 
-
+def replace_user_input(data_dict, new_input):
+    for key in data_dict:
+        if 'user_input' in data_dict[key]:
+            data_dict[key]['user_input'] = new_input
+    return data_dict
 
 
 def update_prompts(json_data, new_prompts):
@@ -34,30 +53,7 @@ def update_prompts(json_data, new_prompts):
         if item_id in new_prompts:
             new_parameters = ast.literal_eval(new_prompts[item_id])
             item['parameters'].update(new_parameters)
-    with open('prompts/data.json', 'w', encoding='utf-8') as f:
-        json.dump(json_data, f, ensure_ascii=False, indent=4)
-
-def update_user_prompt(json_data, new_prompt):
-    if isinstance(json_data, str):
-        data = json.loads(json_data)
-    else:
-        data = json_data
-    token = False
-    for entry in data:
-        if entry.get('name') == 'UserInput':
-            token = True
-    if(token):
-        print("here")
-        for element in data:
-            if element['name'] == 'UserInput':
-                element['parameters']['user_input'] = new_prompt
-    else:
-        for element in data:
-            if element['name'] == 'OpenAIAgent':
-                element['parameters']['input_user_prompt'] = new_prompt
-
-    updated_json = json.dumps(data, indent=4)
-    return updated_json
+    return json_data
 
 
 @app.route('/')
@@ -79,22 +75,36 @@ def submit_student():
     with open('prompts/data.json', 'r') as file:
         factory_input = json.load(file)
     result = ""
-    if not factory_input:
+    current_factory = get_data()
+    if not current_factory:
         result = "Sorry there is no factory input yet."
     else:
-        factory_input = update_user_prompt(factory_input, chat)
-        setup_prompt = json.loads(factory_input)
-        registry = ComponentRegistry()
-        factory = ComponentFactory(registry)
-        factory.setup(setup_prompt)
+        # factory_input = update_user_prompt(factory_input, chat)
+        # setup_prompt = json.loads(factory_input)
+        # registry = ComponentRegistry()
+        # factory = ComponentFactory(registry)
+        # factory.setup(setup_prompt)
+        # print("Running factory....")
+        # result = factory.run()
+        # print("Result = \n" + result)
+        # result = factory.run()
+        # print("rerunning Result = \n" + result)
+        # print("perished")
+        # factory.perish()
+        params = current_factory.get_user_params()
+        print(params)
+        updated = replace_user_input(params, chat)
+        print(updated)
+        current_factory.set_user_params(updated)
+        set_data(current_factory)
         print("Running factory....")
-        result = factory.run()
+        result = current_factory.run()
         print("Result = \n" + result)
-        result = factory.run()
+        result = current_factory.run()
         print("rerunning Result = \n" + result)
         print("perished")
-        factory.perish()
-        result = factory.run()
+        current_factory.perish()
+        result = current_factory.run()
         print("Result = \n" + result)
     return {
         'student_input': chat,
@@ -106,9 +116,12 @@ def submit_student():
 @app.route('/modify_prompt', methods=['POST'])
 def modify_prompt():
     data = request.get_json()
-    with open('prompts/data.json', 'r') as file:
-        factory_input = json.load(file)
-    update_prompts(factory_input, data)
+    current_factory = get_data()
+    factory_input = current_factory.get_modifiable_params()
+    updated = update_prompts(factory_input, data)
+    current_factory.update_modifiable_params(updated)
+    set_data(current_factory)
+    print(current_factory.get_modifiable_params())
     return jsonify(success=True, message='Prompt modified successfully.')
 
 @app.route('/regenerate', methods=['POST'])
@@ -120,20 +133,16 @@ def regenerate():
     if not factory_input:
         result = "Sorry there is no factory input yet."
     else:
-        registry = ComponentRegistry()
-        factory = ComponentFactory(registry)
-        factory.setup(factory_input)
-
+        current_factory = get_data()
+        print(current_factory.get_modifiable_params())
         print("Running factory....")
-        result = factory.run()
+        result = current_factory.run()
         print("Result = \n" + result)
-
-        result = factory.run()
+        result = current_factory.run()
         print("rerunning Result = \n" + result)
-
         print("perished")
-        factory.perish()
-        result = factory.run()
+        current_factory.perish()
+        result = current_factory.run()
         print("Result = \n" + result)
 
     return {
@@ -188,12 +197,16 @@ def process_input():
         print("perished")
         factory.perish()
         result = factory.run()
+        # session['factory'] = factory
+        # dictionary['factory'] = factory
+        set_data(factory)
+        print("success?")
         print("Result = \n" + result)
         params = factory.get_modifiable_params()
 
         result_list = [(key, str(value)) for key, value in params.items()]
-        print("-----")
-        print(result_list)
+        # print("-----")
+        # print(result_list)
     return {
         'thinker_output': thinker_output,
         'builder_output': builder_output,

@@ -1,21 +1,33 @@
 [
     {
-        "name": "UserInput",
-        "id": "UserInput@5t8",
+        "name": "HTTP_API_Get",
+        "id": "HTTP_API_Get@7654",
         "parameters": {
-            "user_input": "Enter the text that requires rewriting here."
+            "url": "https://mastodon.social/api/v1/timelines/public?limit=5",
+            "headers": ""
         },
         "outputs": {
-            "output": ""
+            "result": ""
         }
     },
     {
         "name": "OpenAIAgent",
-        "id": "OpenAIAgent@2p9",
+        "id": "OpenAIAgent@2345",
         "parameters": {
-            "input_system_prompt": "You are an AI assistant tasked with providing rewriting suggestions for the given text.",
-            "input_user_prompt": "##UserInput@5t8",
+            "input_system_prompt": "You are tasked with summarizing the 5 latest posts from Mastodon. Provide a concise summary of each post.",
+            "input_user_prompt": "##HTTP_API_Get@7654",
             "temperature": "0.6"
+        },
+        "outputs": {}
+    },
+    {
+        "name": "PromptBuilder",
+        "id": "PromptBuilder@7890",
+        "parameters": {
+            "template_prompt": "Good morning! Here are the latest updates from Mastodon:\n{first_var}",
+            "first_var": "##OpenAIAgent@2345",
+            "second_var": "",
+            "third_var": ""
         },
         "outputs": {}
     }
