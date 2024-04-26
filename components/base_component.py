@@ -98,7 +98,8 @@ class BaseComponent:
         for input_param in schema.get("inputs", []):
             param_name = input_param["parameter"]
             param_value = getattr(self, param_name, None)  # Default to None if not set
-            params[param_name] = param_value
+            if not callable(param_value):
+                params[param_name] = param_value
         params["description"] = self.in_context_description
 
         # print("$$$$$$$$$$$$$")
@@ -114,7 +115,8 @@ class BaseComponent:
             if input_param["type"] == "user_param":
                 param_name = input_param["parameter"]
                 param_value = getattr(self, param_name, None)  # Default to None if not set
-                params[param_name] = param_value
+                if not callable(param_value):
+                    params[param_name] = param_value
         return params
 
     @deprecated.deprecated #should not use, can directly use the registry to wrap around.
