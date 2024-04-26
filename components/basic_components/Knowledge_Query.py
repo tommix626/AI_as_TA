@@ -78,7 +78,7 @@ class KnowledgeQueryComponent(BaseComponent):
         # query_embedding = response['data'][0]['embedding']
 
         # Retrieve relevant documents based on the query embedding
-        retrieved_docs = Chroma_vs.similarity_search(inputs['query'], top_k=inputs['k'])
+        retrieved_docs = Chroma_vs.similarity_search(inputs['query'])
         retrived_content = ""
         for doc in retrieved_docs:
             retrived_content += doc.page_content

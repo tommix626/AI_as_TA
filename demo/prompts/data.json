@@ -1,7 +1,7 @@
 [
     {
         "name": "DocumentLoader",
-        "id": "DocumentLoader@7654",
+        "id": "DocumentLoader@7652",
         "parameters": {
             "resource_path": "./shared/syllabus.txt"
         },
@@ -11,10 +11,10 @@
     },
     {
         "name": "KnowledgeQuery",
-        "id": "KnowledgeQuery@2345",
+        "id": "KnowledgeQuery@2341",
         "parameters": {
-            "query": "Extract key information from the syllabus text.",
-            "knowledge_data": "##DocumentLoader@7654",
+            "query": "Extract key details from the syllabus document.",
+            "knowledge_data": "##DocumentLoader@7652",
             "k": "5"
         },
         "outputs": {
@@ -23,11 +23,11 @@
     },
     {
         "name": "OpenAIAgent",
-        "id": "OpenAIAgent@8765",
+        "id": "OpenAIAgent@9987",
         "parameters": {
-            "input_system_prompt": "You are tasked with summarizing the syllabus content for an instructor's listening session.",
-            "input_user_prompt": "##KnowledgeQuery@2345",
-            "temperature": "0.6"
+            "input_system_prompt": "You are tasked with summarizing the syllabus content for the instructor to access during breakfast.",
+            "input_user_prompt": "##KnowledgeQuery@2341",
+            "temperature": "0.5"
         },
         "outputs": {}
     }

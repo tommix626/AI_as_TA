@@ -29,12 +29,9 @@ def filter_keys_and_values(input_dict):
 
 
 def update_prompts(json_data, new_prompts):
-    # updates = json.dumps(new_prompts)
-    # Apply updates to the json_data based on the id
     for item in json_data:
         item_id = item['id']
         if item_id in new_prompts:
-            # Safely evaluate the string representation of the dictionary
             new_parameters = ast.literal_eval(new_prompts[item_id])
             item['parameters'].update(new_parameters)
     with open('prompts/data.json', 'w', encoding='utf-8') as f:
@@ -109,13 +106,8 @@ def submit_student():
 @app.route('/modify_prompt', methods=['POST'])
 def modify_prompt():
     data = request.get_json()
-    print("xxxxxxxxxxxxxxxxxxxx")
-    print(data)
-    print("xxxxxxxxxxxxxxxxxxxx")
     with open('prompts/data.json', 'r') as file:
         factory_input = json.load(file)
-    # print("data")
-    # print(data)
     update_prompts(factory_input, data)
     return jsonify(success=True, message='Prompt modified successfully.')
 
@@ -159,6 +151,8 @@ def process_input():
         input_text = data['inputText']
         config = "you don't need an output component leave the final result in the final component is enough"
         input_text += config
+
+
         print("running!")
         driver = SafeCascadeDriver("gpt-3.5-turbo", "gpt-3.5-turbo", "gpt-3.5-turbo", max_retry_times=3)
         driver.execute(input_text)
@@ -167,11 +161,8 @@ def process_input():
         print(f"Final Constructor Output: {driver.constructor_output}")
 
         thinker_output = driver.thinker_output
-        # print(thinker_output)
         builder_output = driver.builder_output
-        # print(builder_output)
         constructor_output = driver.constructor_output
-        # print(constructor_output)
 
         # thinker_output_text = json.dumps(thinker_output)
         # builder_output_text = json.dumps(builder_output)
@@ -198,12 +189,8 @@ def process_input():
         factory.perish()
         result = factory.run()
         print("Result = \n" + result)
-        # with open('prompts/factory.txt', 'w', encoding='utf-8') as file:
-        #     file.write(parsed_input_schemas)
         params = factory.get_modifiable_params()
 
-        # temp = filter_keys_and_values(params)
-        # result_list = [(key, value['input_system_prompt']) for key, value in temp.items() if'input_system_prompt' in value]
         result_list = [(key, str(value)) for key, value in params.items()]
         print("-----")
         print(result_list)
