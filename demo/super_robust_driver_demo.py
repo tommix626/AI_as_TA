@@ -9,7 +9,7 @@ from schema.utils import validate_and_parse_cascade_output
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 driver = SafeCascadeDriver("gpt-3.5-turbo", "gpt-3.5-turbo", "gpt-3.5-turbo",max_retry_times=3)
-instructor_input = "I want you to build a chatbot that give rewriting suggestions (ot rewriting). The rewriting content will be provided by users"
+instructor_input = "I want you to build a chatbot that give rewriting suggestions (not rewriting). The rewriting content will be provided by users"
 
 
 # instructor_input = ("Instructor: load the material in the file I saved at ./shared/content.txt. I will listen to "

@@ -1,32 +1,33 @@
 [
     {
-        "name": "DocumentLoader",
-        "id": "DocumentLoader@7652",
+        "name": "UserInput",
+        "id": "UserInput@5678",
         "parameters": {
-            "resource_path": "./shared/syllabus.txt"
+            "user_input": "Enter the content you want to have rewritten here."
         },
         "outputs": {
-            "document_content": ""
+            "output": ""
         }
     },
     {
-        "name": "KnowledgeQuery",
-        "id": "KnowledgeQuery@2341",
+        "name": "PromptBuilder",
+        "id": "PromptBuilder@9876",
         "parameters": {
-            "query": "Extract key details from the syllabus document.",
-            "knowledge_data": "##DocumentLoader@7652",
-            "k": "5"
+            "template_prompt": "Please provide rewriting suggestions for the following content: {first_var}",
+            "first_var": "##UserInput@5678",
+            "second_var": "",
+            "third_var": ""
         },
         "outputs": {
-            "retrieved_documents": ""
+            "parsed_prompt": ""
         }
     },
     {
         "name": "OpenAIAgent",
-        "id": "OpenAIAgent@9987",
+        "id": "OpenAIAgent@1234",
         "parameters": {
-            "input_system_prompt": "You are tasked with summarizing the syllabus content for the instructor to access during breakfast.",
-            "input_user_prompt": "##KnowledgeQuery@2341",
+            "input_system_prompt": "You are a rewriting assistant tasked with providing suggestions to improve the given content.",
+            "input_user_prompt": "##PromptBuilder@9876",
             "temperature": "0.5"
         },
         "outputs": {}

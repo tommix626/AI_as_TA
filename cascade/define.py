@@ -95,7 +95,7 @@ The context describes the overall structure of the flow with signs and explanati
 The relationship is a list of dependencies among components, each element in the form {name=component_id, downstream=component_id}.
 the component_id is a string concatenation of the name of a component and a randomly generated 4 digit string of character and number (e.g. 3ht4), with a @ sign in middle. Each component_id specifically refer to a particular component in the flow.
 
-Think of each component as a function. focus on which function to call and how to chain the functions together.
+Think of each component as a function. focus on which function to call and how to chain the functions together. Do not output any component that is not mentioned and described in detail to you above. e.g. Do not include a FinalComponent, LeafComponent in the flow
 
 """
 

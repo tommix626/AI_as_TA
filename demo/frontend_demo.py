@@ -76,7 +76,7 @@ def submit_student():
     chat = data['inputText']
     print(chat)
     print("regenerating")
-    with open('prompts/demo.json', 'r') as file:
+    with open('prompts/data.json', 'r') as file:
         factory_input = json.load(file)
     result = ""
     if not factory_input:
@@ -154,10 +154,10 @@ def process_input():
 
 
         print("running!")
-        driver = SafeCascadeDriver("gpt-3.5-turbo", "gpt-3.5-turbo", "gpt-3.5-turbo", max_retry_times=3)
+        driver = SafeCascadeDriver("gpt-3.5-turbo", "gpt-3.5-turbo", "gpt-3.5-turbo", max_retry_times=2)
         driver.execute(input_text)
         print(f"Final Thinker Output: {driver.thinker_output}")
-        print(f"Final Builder Output: {driver.thinker_output}")
+        print(f"Final Builder Output: {driver.builder_output}")
         print(f"Final Constructor Output: {driver.constructor_output}")
 
         thinker_output = driver.thinker_output
