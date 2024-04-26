@@ -97,6 +97,10 @@ class ComponentFactory:
         # Instantiate component with parameters and register it
         component = component_cls(component_id=component_id, **cascade_component_content_schema["parameters"],
                                   **global_api_keys_and_config)
+        # set in context description if available in the content
+        if "description" in cascade_component_content_schema:
+            component.set_in_context_description = cascade_component_content_schema["description"]
+
         self._setup_component_dependencies(component,
                                            cascade_component_content_schema["parameters"])  # set up the callbacks here
         self.registry.register(component)

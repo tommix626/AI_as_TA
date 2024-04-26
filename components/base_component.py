@@ -16,6 +16,9 @@ class BaseComponent:
         self.logger = logging.getLogger(f"{self.__class__.__name__}_{self.component_id}")
         self.upstream_dependency = []
 
+        # default description to be the static description in the schema.
+        self.in_context_description = self.get_component_schema().get("description", "No description available.")
+
     def add_dependency(self, dependency):
         """Add a single upstream dependency for this component."""
         if dependency not in self.upstream_dependency:
@@ -96,6 +99,8 @@ class BaseComponent:
             param_name = input_param["parameter"]
             param_value = getattr(self, param_name, None)  # Default to None if not set
             params[param_name] = param_value
+        params["description"] = self.in_context_description
+
         # print("$$$$$$$$$$$$$")
         # print(params)
         return params
@@ -124,3 +129,7 @@ class BaseComponent:
                 setattr(self, param, value)
             else:
                 self.logger.warning(f"No such parameter '{param}' to update in {self.__class__.__name__}.")
+
+    def set_in_context_description(self, description):
+        """Set the in-context description of the component."""
+        self.in_context_description = description
