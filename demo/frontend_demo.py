@@ -45,9 +45,19 @@ def update_user_prompt(json_data, new_prompt):
         data = json.loads(json_data)
     else:
         data = json_data
-    for element in data:
-        if element['name'] == 'OpenAIAgent':
-            element['parameters']['input_user_prompt'] = new_prompt
+    token = False
+    for entry in data:
+        if entry.get('name') == 'KnowledgeQuery':
+            token = True
+    if(token):
+        print("here")
+        for element in data:
+            if element['name'] == 'KnowledgeQuery':
+                element['parameters']['query'] = new_prompt
+    else:
+        for element in data:
+            if element['name'] == 'OpenAIAgent':
+                element['parameters']['input_user_prompt'] = new_prompt
 
     updated_json = json.dumps(data, indent=4)
     return updated_json

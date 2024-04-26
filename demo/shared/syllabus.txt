@@ -1,0 +1,119 @@
+Computer Science 601.430/630
+COMBINATORICS AND GRAPH THEORY IN COMPUTER SCIENCE
+Spring, 2024 (3 credits, EQ)
+Instructor
+Professor Xin Li, lixints@cs.jhu.edu, http://www.cs.jhu.edu/˜lixints
+Office: Malone Hall 215, 410-516-5847
+Office hours: In person at Malone Hall 215, wednesdays 3pm–4 pm or by appointment.
+Teaching Assistant
+Yan Zhong, yzhong36@jhu.edu
+Office: Malone Hall 216
+Office hours: Fridays 3:00–4:00 pm, in person.
+Meetings
+Tuesday and Thursday, 1:30–2:45 pm, Hodson 216
+Textbook
+Required: Stasys Jukna, Extremal Combinatorics: With Applications in Computer Science. 2nd Edition.
+Recommended: N. Alon and J. H. Spencer, The Probabilistic Method. 4th Edition.
+Online Resources
+Any related online material will be posted at the course website http://www.cs.jhu.edu/˜lixints/
+class/spring24.html.
+Course Information
+• This is a combined graduate and undergraduate level course studying the applications of combinatorics and graph theory in computer science. We will start with some basic combinatorial techniques
+such as counting and pigeon hole principle, and then move to advanced techniques such as the probabilistic method, spectral graph theory and additive combinatorics. We shall see their applications
+in various areas in computer science, such as proving lower bounds in computational models, randomized algorithms, coding theory and pseudorandomness. Students may receive credit for only
+one of EN.601.430 and EN.601.630.
+• Prerequisites
+Discrete Math or permission. Probability theory and linear algebra strongly recommended.
+• Selective Elective
+Course Goals
+Specific Outcomes for this course are that:
+• Students will learn to establish a formal foundation of the theory of computation.
+• Students will learn to analyze and solve problems formally and mathematically.
+This course will address the following Criterion 3 Student Outcomes:
+• An ability to apply knowledge of computing and mathematics appropriate to the discipline (a)
+• An ability to analyze a problem, and identify and define the computing requirements appropriate to
+its solution (b)
+Tentative Course Topics
+• Basic Techniques: Counting; Pigeon hole principle; Matching and Hall’s theorem; Chains and Antichains, with applications to LIS.
+• The Probabilistic Method: Basic method; Lovaz local lemma and its constructive proof; Linearity of
+Expectation; The deletion method; Concentration bounds; Random walks and randomized algorithm
+for finding satisfying assignment for 2-CNF.
+• Spectral Graph theory: Basic properties of graph spectrum; Cheeger’s inequality and approximation
+of graph expansion; Expander graphs and applications to superconcentrators and pseudorandomness; Error correcting codes and expander codes.
+• Ramsey Type Theorems and Constructions of Ramsey Graphs.
+• Additive Combinatorics: Sum product theorem, Szemeredi-Trotter theorem, Kakeya set problem
+and applications to randomness extractors.
+Who should Take this Course
+Students who have strong math background and math skills, and who are interested in theoretical computer
+science/combinatorics and graph theory are encouraged to take this course.
+Who should not Take this Course
+Students who don’t have a strong math background, math skills, or strong interests in theoretical computer
+science/combinatorics and graph theory should not take this course. Specifically, just feeling your math
+background is not weak is not sufficient for taking this class. In addition, there will be a lot of formal
+definitions, math proofs, and abstraction in this course. If you have difficulties with these (e.g., you always
+need to look at specific graphs in order to think about a graph theoretical problem), then you should not take
+this class. Otherwise it’s just going to be a hard time for everyone.
+Course Expectations & Grading
+There will be four or five homework problem sets, one mid-term exam and one final exam. Grading will be
+based on the following rule:
+• Homework: 40%.
+• Mid-term exam: 30%.
+• Final exam: 30%.
+Key Dates
+The mid-term exam will be held on March 14. The final exam will be cumulative and be held on date TBD.
+The specific formats of the exams (either on-line or in person) will be decided later. No make-up exams will
+be given, unless you have legitimate reasons, so plan accordingly. If the exams are held in person, for the
+midterm, you may bring a single, 8.5x11 inch, handwritten sheet of paper (you may use both sides). For the
+final exam you may bring two sheets. No calculators are allowed (they won’t be necessary).
+Assignments & Readings
+Assignments and further readings will be posted on the course website http://www.cs.jhu.edu/˜lixints/class/spring24.html
+Gradescope: https://gradescope.com/
+CampusWire: https://campuswire.com/p/GA7466122 Code: 4255
+Ethics Academic Integrity:
+The strength of the university depends on academic and personal integrity. In this course, you must be honest
+and truthful. Ethical violations include cheating on exams, plagiarism, reuse of assignments, improper use
+of the internet and electronic devices, unauthorized collaboration, alteration of graded assignments, forgery
+and falsification, lying, facilitating academic dishonesty, and unfair competition.
+Report any violations you witness to the instructor. You can also contact:
+• For undergraduates: the associate dean of student conduct (or designee) by calling the Office of the
+Dean of Student Life at 410-516-8208 or via email at studentconduct@jhu.edu
+• For KSAS Graduate Students: rseitz5@jh.edu
+• For WSE Graduate Students: christinekavanagh@jhu.edu
+[In addition, the specific ethics guidelines for this course are:
+(1) Collaboration policy: While you should first think about homework problems on your own, I encourage you to discuss homework problems with your classmates. However, you must write up your
+own solutions. Students found sharing the same paragraph in their homework will receive 0 point for
+the homework, and risk further punishment such as automatic failure and report to the University.
+Furthermore, you must acknowledge any collaboration by writing the names of your collaborators
+on the front page of the assignment. You don’t lose points by having collaborators.
+(2) Using other resources: You can use other resources (e.g., online resources) to help you understand the topics generally. However, using resources other than those provided in class (textbook,
+notes, homework solutions) in your homework or exams is prohibited. Using unauthorized solutions from other resources in homework or exams is considered plagiarism and will result in 0 point
+for the assignments and potential further punishment as in (1). To clarify, unauthorized resources
+for homework or exams include artificial intelligence (AI) assistants such as ChatGPT and GitHub
+Copilot. Therefore, use of such AI assistants in homework and exams is not allowed in this course.
+(3) Late Policy: You have a total of two late days without penalty for the homework. A day here means
+24 hours. For example, if the deadline is 7pm, then one day means from 7pm to 7pm next day,
+and if you submit your homework any time after 7pm the first day until 7pm the next day, you are
+considered to have used one whole late day. You can use your two late days freely, e.g., one late day
+for one homework and one for another, or two late days for one homework. Once you use up your
+late days, your late homework will not be graded, unless you have legitimate reasons.
+You can find more information about university misconduct policies on the web at these sites:
+• Undergraduates: https://studentaffairs.jhu.edu/policies-guidelines/undergrad-ethics/
+• Graduate students: http://e-catalog.jhu.edu/grad-students/graduate-specific-policies/
+#misconduct
+Classroom Climate
+I am committed to creating a classroom environment that values the diversity of experiences and perspectives
+that all students bring. Everyone here has the right to be treated with dignity and respect. I believe fostering
+an inclusive climate is important because research and my experience show that students who interact with
+peers who are different from themselves learn new things and experience tangible educational outcomes.
+Please join me in creating a welcoming and vibrant classroom climate. Note that you should expect to be
+challenged intellectually by me, the TAs, and your peers, and at times this may feel uncomfortable. Indeed,
+it can be helpful to be pushed sometimes in order to learn and grow. But at no time in this learning process
+should someone be singled out or treated unequally on the basis of any seen or unseen part of their identity.
+If you ever have concerns in this course about harassment, discrimination, or any unequal treatment, or if
+you seek accommodations or resources, I invite you to share directly with me or the TAs. I promise that
+we will take your communication seriously and to seek mutually acceptable resolutions and accommodations. Reporting will never impact your course grade. You may also share concerns with the Department
+Head (Randal Burns, randal@cs.jhu.edu), the Director of Undergraduate Studies (Joanne Selinski,
+joanne@cs.jhu.edu), the Assistant Dean for Diversity and Inclusion (Darlene Saporu, dsaporu@jhu.edu),
+or the Office of Institutional Equity (oie@jhu.edu). In handling reports, people will protect your privacy
+as much as possible, but faculty and staff are required to officially report information for some cases (e.g.
+sexual harassment).
