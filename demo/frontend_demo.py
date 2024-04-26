@@ -40,17 +40,62 @@ def update_prompts(json_data, new_prompts):
     with open('prompts/data.json', 'w', encoding='utf-8') as f:
         json.dump(json_data, f, ensure_ascii=False, indent=4)
 
+def update_user_prompt(json_data, new_prompt):
+    if isinstance(json_data, str):
+        data = json.loads(json_data)
+    else:
+        data = json_data
+    for element in data:
+        if element['name'] == 'OpenAIAgent':
+            element['parameters']['input_user_prompt'] = new_prompt
+
+    updated_json = json.dumps(data, indent=4)
+    return updated_json
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# @app.route('/factory/run')
-# def hello():
-#     result = factory.run()
-#     print("rerunning Result = \n" + result)
-#     return result
+###############################################################################
+#Student View
 
+@app.route('/student')
+def student():
+    return render_template('student.html')
+@app.route('/submit_student', methods=['POST'])
+def submit_student():
+    data = request.get_json()
+    chat = data['inputText']
+    print(chat)
+    print("regenerating")
+    with open('prompts/demo.json', 'r') as file:
+        factory_input = json.load(file)
+    result = ""
+    if not factory_input:
+        result = "Sorry there is no factory input yet."
+    else:
+        factory_input = update_user_prompt(factory_input, chat)
+        setup_prompt = json.loads(factory_input)
+        registry = ComponentRegistry()
+        factory = ComponentFactory(registry)
+        factory.setup(setup_prompt)
+        print("Running factory....")
+        result = factory.run()
+        print("Result = \n" + result)
+        result = factory.run()
+        print("rerunning Result = \n" + result)
+        print("perished")
+        factory.perish()
+        result = factory.run()
+        print("Result = \n" + result)
+    return {
+        'student_input': chat,
+        'final_result': result
+    }
+
+
+###############################################################################
 @app.route('/modify_prompt', methods=['POST'])
 def modify_prompt():
     data = request.get_json()

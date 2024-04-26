@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='students.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div id="chat-box">
+            <!-- Chat messages will be appended here -->
+        </div>
+        <form id = "user_input">
+            <input type="text" id="message-input" placeholder="Type your message here...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('user_input').onsubmit = function(event) {
+            event.preventDefault();
+            let inputText = document.getElementById('message-input').value;
+            fetch('/submit_student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputText: inputText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let container = document.getElementById('chat-box');
+                container.innerHTML += '<div class="chat-bubble user">' + data.student_input + '</div>';
+                container.innerHTML += '<div class="chat-bubble final">' + data.final_result + '</div>';
+                document.getElementById('message-input').value = '';
+                container.scrollTop = container.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    </script>
+</body>
+</html>
