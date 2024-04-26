@@ -76,7 +76,7 @@ class ComponentFactory:
     def __init__(self, registry: ComponentRegistry):
         self.registry = registry  # factory will populate this registry with components and dependency.
         self.entry_component = None
-        self.user_params = {} #contains the extra parameters that are dynamically set by the user (setting, user_input etc.)
+        self.user_params = {}  # contains the extra parameters that are dynamically set by the user (setting, user_input etc.)
 
     def create_component(self, cascade_component_content_schema):
         """Create a component based on the schema. Schema is the output of the llm orchestration"""
@@ -95,8 +95,10 @@ class ComponentFactory:
             return None
 
         # Instantiate component with parameters and register it
-        component = component_cls(component_id=component_id, **cascade_component_content_schema["parameters"],**global_api_keys_and_config)
-        self._setup_component_dependencies(component, cascade_component_content_schema["parameters"]) #set up the callbacks here
+        component = component_cls(component_id=component_id, **cascade_component_content_schema["parameters"],
+                                  **global_api_keys_and_config)
+        self._setup_component_dependencies(component,
+                                           cascade_component_content_schema["parameters"])  # set up the callbacks here
         self.registry.register(component)
 
         return component
@@ -144,7 +146,6 @@ class ComponentFactory:
                 logging.error(f"Component creation error, component_id={component_id}.")
                 return False
 
-
         # last one should be the entry point of the flow.
         self.entry_component = self.registry.get(sorted_components_id[-1])
         return True
@@ -157,7 +158,6 @@ class ComponentFactory:
 
     def perish(self):
         self.entry_component.perish()
-
 
     @api_endpoint_identifier
     def get_modifiable_params(self):
@@ -176,7 +176,6 @@ class ComponentFactory:
         # print(all_params)
 
         return all_params
-
 
     @api_endpoint_identifier
     def update_modifiable_params(self, updates):

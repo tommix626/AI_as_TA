@@ -65,6 +65,7 @@ class BaseComponent:
 
     def execute(self, inputs, user_params=None):
         """Execute the component's main logic with the prepared inputs. To be implemented by subclasses.
+        :param inputs:
         :param user_params:
         """
         raise NotImplementedError("Subclasses must implement this method for execution.")
